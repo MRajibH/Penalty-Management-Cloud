@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Penalty</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Add New Penalty</h1>
+    </header>
+
+    <form action="/add" method="POST">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="penalty">Penalty:</label>
+            <input type="text" id="penalty" name="penalty" required>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required>
+        </div>
+        <button type="submit" class="submit-btn">Add Penalty</button>
+    </form>
+
+    <a href="/" class="back-btn">Back to Penalties</a>
+</body>
+</html>
+
