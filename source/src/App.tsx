@@ -1,34 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import  { useState, useMemo, useEffect } from 'react';
 import { Plus } from 'lucide-react';
-import { Penalty, SearchFilters, Department } from './types';
+import { Penalty, SearchFilters} from './types';
 import { PenaltyCard } from './components/PenaltyCard';
 import { Stats } from './components/Stats';
 import { AddPenaltyForm } from './components/AddPenaltyForm';
 import { SearchBar } from './components/SearchBar';
 import { Filters } from './components/Filters';
-
-const initialPenalties: Penalty[] = [
-  {
-    id: '1',
-    engineerName: 'John Doe',
-    department: 'Frontend',
-    reason: 'Late to Daily Standup',
-    amount: 5.00,
-    date: '2024-03-10',
-    status: 'PENDING',
-    description: 'Was 15 minutes late to the daily standup meeting',
-  },
-  {
-    id: '2',
-    engineerName: 'Jane Smith',
-    department: 'Backend',
-    reason: 'Failed to Write Unit Tests',
-    amount: 10.00,
-    date: '2024-03-09',
-    status: 'PAID',
-    description: 'Pushed code without proper unit test coverage',
-  },
-];
+import { penaltyCollectionRef } from './db/firebase.db';
+import { addDoc, doc,  onSnapshot, updateDoc } from 'firebase/firestore';
 
 const initialFilters: SearchFilters = {
   search: '',
@@ -41,9 +20,29 @@ const initialFilters: SearchFilters = {
 };
 
 function App() {
-  const [penalties, setPenalties] = useState<Penalty[]>(initialPenalties);
+  const [penalties, setPenalties] = useState<Penalty[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
+
+  useEffect(()=>{
+    const unscubscribe = onSnapshot(penaltyCollectionRef, (snapshot) => {
+      const panelties:any = [];
+      snapshot.forEach((doc) => {
+        panelties.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+
+      setPenalties(panelties);
+      
+    });
+
+    return () => {
+      unscubscribe();
+    }
+
+  },[])
 
   const stats = {
     totalPenalties: penalties.length,
@@ -56,23 +55,26 @@ function App() {
       .reduce((sum, p) => sum + p.amount, 0),
   };
 
-  const handleAddPenalty = (newPenalty: Omit<Penalty, 'id' | 'status'>) => {
-    setPenalties([
-      ...penalties,
-      {
-        ...newPenalty,
-        id: Date.now().toString(),
-        status: 'PENDING',
-      },
-    ]);
+  const handleAddPenalty = async (newPenalty: Omit<Penalty, 'id' | 'status'>) => {
+
+    await addDoc(penaltyCollectionRef,{
+      ...newPenalty,
+      id: Date.now().toString(),
+      status: 'PENDING',
+    })
+    // setDoc(penaltyRef, {panelties:[
+    //   ...penalties,
+    //   {
+    //     ...newPenalty,
+    //     id: Date.now().toString(),
+    //     status: 'PENDING',
+    //   },
+    // ]});
   };
 
   const handleStatusChange = (id: string, newStatus: Penalty['status']) => {
-    setPenalties(
-      penalties.map((penalty) =>
-        penalty.id === id ? { ...penalty, status: newStatus } : penalty
-      )
-    );
+    const docRef = doc(penaltyCollectionRef, id);
+    updateDoc(docRef, {status: newStatus});
   };
 
   const filteredPenalties = useMemo(() => {
