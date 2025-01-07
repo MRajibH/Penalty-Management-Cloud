@@ -76,7 +76,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Amount ($)</label>
+            <label className="block text-sm font-medium text-gray-700">Amount (৳)</label>
             <input
               type="number"
               required
