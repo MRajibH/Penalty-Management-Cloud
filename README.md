@@ -1,6 +1,5 @@
 
-
-<a href=https://mrajibh.github.io/Penalty-Management-Cloud/ >  #Penalty Management Cloud </a> 
+# Penalty Management Cloud
 
 Welcome to **Penalty Management Cloud**, a software solution designed to help cloud teams manage and keep track of penalties or infractions effectively. This project aims to simplify and automate the process of managing various penalties within your organization, whether they relate to policy violations, infractions, or any other type of penalty system you may have in place.
 
