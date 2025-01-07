@@ -4,7 +4,7 @@
 
 Welcome to **Penalty Management Cloud**, a software solution designed to help cloud teams manage and keep track of penalties or infractions effectively. This project aims to simplify and automate the process of managing various penalties within your organization, whether they relate to policy violations, infractions, or any other type of penalty system you may have in place.
 
-## Features [ All of them are yet to be implemented ]
+## Features [ Some  of them are yet to be implemented ]
 
 - **Track Penalties:** Easily add, update, and remove penalties in the system.
 - **Real-Time Management:** View penalties in real-time and make decisions based on updated data.
