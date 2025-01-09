@@ -18,7 +18,7 @@ To get started with the Penalty Management Cloud project, follow the steps below
 
 ```bash
 git clone https://github.com/MRajibH/Penalty-Management-Cloud.git
-cd Penalty-Management-Cloud/source
+cd Penalty-Management-Cloud
 ```
 
 ### Install dependencies
