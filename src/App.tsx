@@ -15,7 +15,7 @@ last30Days.setDate(today.getDate() - 30);
 
 const initialFilters: SearchFilters = {
   search: '',
-  department: 'DevOps',
+  department: 'DevSecOps',
   status: 'PENDING',
   dateRange: {
     start: last30Days.toISOString().split('T')[0], // Format as YYYY-MM-DD

@@ -5,7 +5,7 @@ interface FiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
 }
 
-const departments: Department[] = ['Frontend', 'Backend', 'DevOps', 'QA', 'Mobile', 'Design'];
+const departments: Department[] = ['Frontend', 'Backend', 'DevSecOps', 'QA', 'Mobile', 'Design'];
 
 export function Filters({ filters, onFilterChange }: FiltersProps) {
   return (

@@ -7,12 +7,12 @@ interface AddPenaltyFormProps {
   onClose: () => void;
 }
 
-const departments: Department[] = ['Frontend', 'Backend', 'DevOps', 'QA', 'Mobile', 'Design'];
+const departments: Department[] = ['Frontend', 'Backend', 'DevSecOps', 'QA', 'Mobile', 'Design'];
 
 export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
   const [formData, setFormData] = useState({
     engineerName: '',
-    department: 'Frontend' as Department,
+    department: 'DevSecOps' as Department,
     reason: '',
     amount: '',
     date: new Date().toISOString().split('T')[0],
@@ -44,7 +44,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
             <input
               type="text"
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.36rem] bg-[#efefef]"
               value={formData.engineerName}
               onChange={(e) => setFormData({ ...formData, engineerName: e.target.value })}
             />
@@ -54,7 +54,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
             <label className="block text-sm font-medium text-gray-700">Department</label>
             <select
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-[#efefef]"
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value as Department })}
             >
@@ -69,7 +69,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
             <input
               type="text"
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.36rem] bg-[#efefef]"
               value={formData.reason}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
             />
@@ -82,7 +82,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
               required
               min="0"
               step="0.01"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.36rem] bg-[#efefef]"
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
             />
@@ -93,7 +93,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
             <input
               type="date"
               required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.297rem] bg-[#efefef]"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             />
@@ -102,7 +102,7 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
           <div>
             <label className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-[#efefef]"
               rows={3}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}

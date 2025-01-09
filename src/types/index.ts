@@ -16,7 +16,7 @@ export interface PenaltyStats {
   paidAmount: number;
 }
 
-export type Department = 'Frontend' | 'Backend' | 'DevOps' | 'QA' | 'Mobile' | 'Design';
+export type Department = 'Frontend' | 'Backend' | 'DevSecOps' | 'QA' | 'Mobile' | 'Design';
 
 export interface SearchFilters {
   search: string;
