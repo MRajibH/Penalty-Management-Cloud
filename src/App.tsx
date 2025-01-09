@@ -9,13 +9,17 @@ import { Filters } from './components/Filters';
 import { penaltyCollectionRef } from './db/firebase.db';
 import { addDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 
+const today = new Date();
+const last30Days = new Date();
+last30Days.setDate(today.getDate() - 30);
+
 const initialFilters: SearchFilters = {
   search: '',
-  department: 'ALL',
-  status: 'ALL',
+  department: 'DevOps',
+  status: 'PENDING',
   dateRange: {
-    start: '',
-    end: '',
+    start: last30Days.toISOString().split('T')[0], // Format as YYYY-MM-DD
+    end: today.toISOString().split('T')[0],       // Format as YYYY-MM-DD
   },
 };
 

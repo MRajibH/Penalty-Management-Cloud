@@ -1,4 +1,3 @@
-import React from 'react';
 import { AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { PenaltyStats } from '../types';
 

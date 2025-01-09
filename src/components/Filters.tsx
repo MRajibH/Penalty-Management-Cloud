@@ -1,4 +1,3 @@
-import React from 'react';
 import { Department, SearchFilters } from '../types';
 
 interface FiltersProps {
@@ -17,7 +16,7 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
           <select
             value={filters.department}
             onChange={(e) => onFilterChange({ ...filters, department: e.target.value as Department | 'ALL' })}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-[#efefef]"
           >
             <option value="ALL">All Departments</option>
             {departments.map((dept) => (
@@ -31,7 +30,7 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
           <select
             value={filters.status}
             onChange={(e) => onFilterChange({ ...filters, status: e.target.value as SearchFilters['status'] })}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-[#efefef]"
           >
             <option value="ALL">All Status</option>
             <option value="PENDING">Pending</option>
@@ -49,7 +48,7 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
               ...filters,
               dateRange: { ...filters.dateRange, start: e.target.value }
             })}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.297rem] bg-[#efefef]"
           />
         </div>
 
@@ -62,7 +61,7 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
               ...filters,
               dateRange: { ...filters.dateRange, end: e.target.value }
             })}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.297rem] bg-[#efefef]"
           />
         </div>
       </div>
