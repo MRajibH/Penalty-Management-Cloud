@@ -3,6 +3,8 @@
 
 Welcome to **Penalty Management Cloud**, a software solution designed to help cloud teams manage and keep track of penalties or infractions effectively. This project aims to simplify and automate the process of managing various penalties within your organization, whether they relate to policy violations, infractions, or any other type of penalty system you may have in place.
 
+#### Live at: https://mrajibh.github.io/Penalty-Management-Cloud/
+
 ## Features [ Some  of them are yet to be implemented ]
 
 - **Track Penalties:** Easily add, update, and remove penalties in the system.
@@ -44,7 +46,6 @@ We welcome contributions from the community to make this project better! Whether
     ```bash
     git clone https://github.com/YOUR_USERNAME/Penalty-Management-Cloud.git
     cd Penalty-Management-Cloud
-
     ```
 3. **Create a new branch** for your feature or fix:
     ```bash
