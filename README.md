@@ -43,7 +43,7 @@ We welcome contributions from the community to make this project better! Whether
 2. **Clone your fork** locally:
     ```bash
     git clone https://github.com/YOUR_USERNAME/Penalty-Management-Cloud.git
-    cd Penalty-Management-Cloud/source
+    cd Penalty-Management-Cloud
 
     ```
 3. **Create a new branch** for your feature or fix:
