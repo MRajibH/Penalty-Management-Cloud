@@ -17,8 +17,6 @@ interface FiltersProps {
 const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mobile", "Design"];
 
 export function Filters({ filters, onFilterChange }: FiltersProps) {
-  console.log(new Date(filters.dateRange.start));
-
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

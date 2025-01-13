@@ -9,6 +9,7 @@ import { Filters } from "./components/Filters";
 import { penaltyCollectionRef } from "./db/firebase.db";
 import { addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { Button } from "./components/ui/button";
+import { Dialog, DialogTrigger } from "./components/ui/dialog";
 
 const today = new Date();
 const last30Days = new Date();
@@ -26,7 +27,6 @@ const initialFilters: SearchFilters = {
 
 function App() {
   const [penalties, setPenalties] = useState<Penalty[]>([]);
-  const [showAddForm, setShowAddForm] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 
   useEffect(() => {
@@ -98,17 +98,15 @@ function App() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Penalty Management System</h1>
-          {/* <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add Penalty
-          </button> */}
-          <Button onClick={() => setShowAddForm(true)}>
-            <Plus />
-            Add Penalty
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                Add Penalty
+                <Plus />
+              </Button>
+            </DialogTrigger>
+            <AddPenaltyForm onAdd={handleAddPenalty} />
+          </Dialog>
         </div>
 
         <Stats stats={stats} />
@@ -129,8 +127,6 @@ function App() {
             <p className="text-gray-500">No penalties found</p>
           </div>
         )}
-
-        {showAddForm && <AddPenaltyForm onAdd={handleAddPenalty} onClose={() => setShowAddForm(false)} />}
       </div>
     </div>
   );

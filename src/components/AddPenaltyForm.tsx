@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
-import { Department, Penalty } from '../types';
+import React, { useState } from "react";
+import { CalendarIcon } from "lucide-react";
+import { Department, Penalty } from "../types";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "./ui/calendar";
+import { Textarea } from "./ui/textarea";
+import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 
 interface AddPenaltyFormProps {
-  onAdd: (penalty: Omit<Penalty, 'id' | 'status'>) => void;
-  onClose: () => void;
+  onAdd: (penalty: Omit<Penalty, "id" | "status">) => void;
 }
 
-const departments: Department[] = ['Frontend', 'Backend', 'DevSecOps', 'QA', 'Mobile', 'Design'];
+const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mobile", "Design"];
 
-export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
+export function AddPenaltyForm({ onAdd }: AddPenaltyFormProps) {
   const [formData, setFormData] = useState({
-    engineerName: '',
-    department: 'DevSecOps' as Department,
-    reason: '',
-    amount: '',
-    date: new Date().toISOString().split('T')[0],
-    description: '',
+    engineerName: "",
+    department: "DevSecOps" as Department,
+    reason: "",
+    amount: "",
+    date: new Date().toISOString().split("T")[0],
+    description: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,107 +34,119 @@ export function AddPenaltyForm({ onAdd, onClose }: AddPenaltyFormProps) {
       ...formData,
       amount: parseFloat(formData.amount),
     });
-    onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div className="flex justify-between items-center p-6 border-b">
-          <h2 className="text-xl font-semibold">Add New Penalty</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X className="w-6 h-6" />
-          </button>
+    <DialogContent className="sm:max-w-[450px]">
+      <DialogHeader>
+        <DialogTitle>Add new penalty</DialogTitle>
+        <DialogDescription>Create, customize, and assign a new penalty for specific rule violations.</DialogDescription>
+      </DialogHeader>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid gap-3">
+          <Label className="px-0.5">Engineer Name</Label>
+          <Input
+            required
+            type="text"
+            value={formData.engineerName}
+            placeholder="Enter engineer's name"
+            onChange={(e) => setFormData({ ...formData, engineerName: e.target.value })}
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Engineer Name</label>
-            <input
-              type="text"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.36rem] bg-[#efefef]"
-              value={formData.engineerName}
-              onChange={(e) => setFormData({ ...formData, engineerName: e.target.value })}
-            />
-          </div>
+        <div className="grid gap-3">
+          <Label className="px-0.5">Department</Label>
+          <Select
+            required
+            value={formData.department}
+            onValueChange={(value) => setFormData({ ...formData, department: value as Department })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Select a Department</SelectLabel>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Department</label>
-            <select
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-[#efefef]"
-              value={formData.department}
-              onChange={(e) => setFormData({ ...formData, department: e.target.value as Department })}
-            >
-              {departments.map((dept) => (
-                <option key={dept} value={dept}>{dept}</option>
-              ))}
-            </select>
-          </div>
+        <div className="grid gap-3">
+          <Label className="px-0.5">Reason</Label>
+          <Input
+            type="text"
+            required
+            value={formData.reason}
+            placeholder="Enter a reason"
+            onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Reason</label>
-            <input
-              type="text"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.36rem] bg-[#efefef]"
-              value={formData.reason}
-              onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-            />
-          </div>
+        <div className="grid gap-3">
+          <Label className="px-0.5">Amount (৳)</Label>
+          <Input
+            type="number"
+            required
+            min="0"
+            step="0.01"
+            value={formData.amount}
+            placeholder="Enter a amount"
+            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Amount (৳)</label>
-            <input
-              type="number"
-              required
-              min="0"
-              step="0.01"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.36rem] bg-[#efefef]"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-            />
-          </div>
+        <div className="grid gap-3">
+          <Label className="px-0.5">Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal")}>
+                {formData.date ? format(formData.date, "PPP") : <span>Pick a date</span>}
+                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                onSelect={(date) => {
+                  const year = date?.getFullYear();
+                  const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
+                  const day = String(date?.getDate()).padStart(2, "0"); // Day of the month
+                  const value = `${year}-${month}-${day}`;
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Date</label>
-            <input
-              type="date"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.297rem] bg-[#efefef]"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-            />
-          </div>
+                  setFormData({
+                    ...formData,
+                    date: value,
+                  });
+                }}
+                selected={new Date(formData.date)}
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
-            <textarea
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-[#efefef]"
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
+        <div className="grid gap-3">
+          <Label className="px-0.5">Description</Label>
+          <Textarea
+            rows={3}
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+        </div>
 
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Add Penalty
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <DialogFooter>
+          <Button variant={"default"} type="submit">
+            Add Penalty
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
   );
 }
