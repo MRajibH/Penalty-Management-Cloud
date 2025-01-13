@@ -1,11 +1,12 @@
-import { Department, SearchFilters } from '../types';
+import { Department, SearchFilters } from "../types";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 
 interface FiltersProps {
   filters: SearchFilters;
   onFilterChange: (filters: SearchFilters) => void;
 }
 
-const departments: Department[] = ['Frontend', 'Backend', 'DevSecOps', 'QA', 'Mobile', 'Design'];
+const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mobile", "Design"];
 
 export function Filters({ filters, onFilterChange }: FiltersProps) {
   return (
@@ -13,7 +14,7 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-          <select
+          {/* <select
             value={filters.department}
             onChange={(e) => onFilterChange({ ...filters, department: e.target.value as Department | 'ALL' })}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-[#efefef]"
@@ -22,14 +23,30 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
             {departments.map((dept) => (
               <option key={dept} value={dept}>{dept}</option>
             ))}
-          </select>
+          </select> */}
+          <Select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Department</SelectLabel>
+                <SelectItem value="ALL">All Departments</SelectItem>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
           <select
             value={filters.status}
-            onChange={(e) => onFilterChange({ ...filters, status: e.target.value as SearchFilters['status'] })}
+            onChange={(e) => onFilterChange({ ...filters, status: e.target.value as SearchFilters["status"] })}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-[#efefef]"
           >
             <option value="ALL">All Status</option>
@@ -44,10 +61,12 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
           <input
             type="date"
             value={filters.dateRange.start}
-            onChange={(e) => onFilterChange({
-              ...filters,
-              dateRange: { ...filters.dateRange, start: e.target.value }
-            })}
+            onChange={(e) =>
+              onFilterChange({
+                ...filters,
+                dateRange: { ...filters.dateRange, start: e.target.value },
+              })
+            }
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.297rem] bg-[#efefef]"
           />
         </div>
@@ -57,10 +76,12 @@ export function Filters({ filters, onFilterChange }: FiltersProps) {
           <input
             type="date"
             value={filters.dateRange.end}
-            onChange={(e) => onFilterChange({
-              ...filters,
-              dateRange: { ...filters.dateRange, end: e.target.value }
-            })}
+            onChange={(e) =>
+              onFilterChange({
+                ...filters,
+                dateRange: { ...filters.dateRange, end: e.target.value },
+              })
+            }
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[0.297rem] bg-[#efefef]"
           />
         </div>
