@@ -1,7 +1,12 @@
-import RootLayout from "./layout/RootLayout";
+import { HashRouter } from "react-router-dom";
+import RootRouter from "./routes/RootRouter";
 
 function App() {
-  return <RootLayout />;
+  return (
+    <HashRouter>
+      <RootRouter />
+    </HashRouter>
+  );
 }
 
 export default App;

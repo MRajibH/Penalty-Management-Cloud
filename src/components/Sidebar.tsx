@@ -1,74 +1,111 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-import { Home, LogOut, Settings } from "lucide-react";
-const SidebarComponent = ({ children }: { children: React.ReactNode }) => {
+import * as React from "react";
+import { Braces, Inbox, LogOut, Users2 } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Separator } from "./ui/separator";
+import { Nav } from "./Nav";
+
+interface SidebarProps {
+  isCollapsed: boolean;
+}
+
+export const Logo = ({ className }: { className?: string }) => (
+  <span className={cn("w-8 h-8 flex items-center", className)}>
+    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></g>
+      <g id="SVGRepo_iconCarrier">
+        {" "}
+        <path
+          d="M16 8C16 10.3005 15.029 12.3742 13.4744 13.8336L12.0147 11.8244L13.4959 7.26574L15.8592 6.49785C15.9516 6.98439 16 7.48655 16 8Z"
+          fill="#0f172a"
+        ></path>{" "}
+        <path
+          d="M10.3966 13L11.8573 15.0104C10.7134 15.6411 9.39861 16 8 16C6.60139 16 5.28661 15.6411 4.14273 15.0104L5.60335 13H10.3966Z"
+          fill="#0f172a"
+        ></path>{" "}
+        <path
+          d="M0 8C0 10.3005 0.971022 12.3742 2.52556 13.8336L3.98532 11.8244L2.50412 7.26575L0.140801 6.49786C0.0483698 6.9844 0 7.48655 0 8Z"
+          fill="#0f172a"
+        ></path>{" "}
+        <path
+          d="M3.12212 5.36363L0.758423 4.59561C1.90208 2.16713 4.23136 0.40714 6.99999 0.0618925V2.54619L3.12212 5.36363Z"
+          fill="#0f172a"
+        ></path>{" "}
+        <path
+          d="M8.99999 2.54619V0.0618896C11.7686 0.40713 14.0979 2.16712 15.2416 4.5956L12.8779 5.36362L8.99999 2.54619Z"
+          fill="#0f172a"
+        ></path>{" "}
+        <path
+          d="M4.47328 6.85409L7.99999 4.29179L11.5267 6.85409L10.1796 11H5.82037L4.47328 6.85409Z"
+          fill="#0f172a"
+        ></path>{" "}
+      </g>
+    </svg>
+  </span>
+);
+
+export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <main className="w-full">
-        {/* <SidebarTrigger /> */}
-        {children}
-      </main>
-    </SidebarProvider>
+    <React.Fragment>
+      <div
+        className={cn(
+          "flex h-[52px] items-center justify-center",
+          isCollapsed ? "h-[52px]" : "px-2"
+        )}
+      >
+        <Logo className={isCollapsed ? "mr-0" : "mr-4"} />
+        {!isCollapsed && (
+          <h3 className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+            Penalty Management System
+          </h3>
+        )}
+        {/* <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} /> */}
+      </div>
+      <Separator />
+      <Nav
+        isCollapsed={isCollapsed}
+        links={[
+          {
+            title: "Dashboard",
+            url: "/app/dashboard",
+            label: "",
+            icon: Inbox,
+            variant: "default",
+          },
+          {
+            title: "Historical Data",
+            url: "/app/historical_data",
+            label: "",
+            icon: Braces,
+            variant: "ghost",
+          },
+          {
+            title: "User Management",
+            url: "/app/user_management",
+            label: "",
+            icon: Users2,
+            variant: "ghost",
+          },
+        ]}
+      />
+      <Separator />
+      <Nav
+        isCollapsed={isCollapsed}
+        links={[
+          {
+            title: "Logout",
+            url: "logout",
+            label: "",
+            icon: LogOut,
+            variant: "ghost",
+          },
+        ]}
+      />
+    </React.Fragment>
   );
 };
-
-export default SidebarComponent;
-
-// Menu items.
-const items = [
-  {
-    title: "Dashboard",
-    url: "dashboard",
-    icon: Home,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-];
-
-export function AppSidebar() {
-  return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarGroupLabel>Management</SidebarGroupLabel>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild className="hover:bg-red-50 cursor-pointer">
-                  <span>
-                    <LogOut className="text-red-600" />
-                    <span className="text-red-600">Logout</span>
-                  </span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  );
-}
