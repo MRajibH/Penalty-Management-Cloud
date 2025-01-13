@@ -3,13 +3,16 @@ import { Filters } from "@/components/Filters";
 import { PenaltyCard } from "@/components/PenaltyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Stats } from "@/components/Stats";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { useAuthContext } from "@/context/authContext";
 import { penaltyCollectionRef } from "@/db/firebase.db";
+import { cn } from "@/lib/utils";
 import { Penalty, SearchFilters } from "@/types";
 import { addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { Plus } from "lucide-react";
+import { LogIn, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 const today = new Date();
 const last30Days = new Date();
@@ -26,6 +29,7 @@ const initialFilters: SearchFilters = {
 };
 
 const Dashboard = () => {
+  const { isLoggedIn } = useAuthContext();
   const [penalties, setPenalties] = useState<Penalty[]>([]);
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 
@@ -105,15 +109,30 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             Penalty Management System
           </h1>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>
-                Add Penalty
-                <Plus />
-              </Button>
-            </DialogTrigger>
-            <AddPenaltyForm onAdd={handleAddPenalty} />
-          </Dialog>
+
+          {isLoggedIn ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>
+                  Add Penalty
+                  <Plus />
+                </Button>
+              </DialogTrigger>
+              <AddPenaltyForm onAdd={handleAddPenalty} />
+            </Dialog>
+          ) : (
+            <Link
+              to={"/login"}
+              className={cn(
+                buttonVariants({
+                  variant: "default",
+                })
+              )}
+            >
+              Login
+              <LogIn />
+            </Link>
+          )}
         </div>
 
         <Stats stats={stats} />

@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
+import { useAuthContext } from "@/context/authContext";
 
 interface PenaltyCardProps {
   penalty: Penalty;
@@ -32,6 +33,8 @@ export const BDT = () => (
 );
 
 export function PenaltyCard({ penalty, onStatusChange }: PenaltyCardProps) {
+  const { isLoggedIn } = useAuthContext();
+
   return (
     <>
       <Card>
@@ -70,7 +73,7 @@ export function PenaltyCard({ penalty, onStatusChange }: PenaltyCardProps) {
           </div>
         </CardContent>
         <CardFooter className="gap-4">
-          {penalty.status === "PENDING" && (
+          {penalty.status === "PENDING" && isLoggedIn && (
             <>
               <Button
                 variant={"outline"}
