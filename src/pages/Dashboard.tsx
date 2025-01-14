@@ -3,14 +3,13 @@ import { Filters } from "@/components/Filters";
 import { PenaltyCard } from "@/components/PenaltyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Stats } from "@/components/Stats";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { buttonVariants } from "@/components/ui/button";
 import { useAuthContext } from "@/context/authContext";
 import { penaltyCollectionRef } from "@/db/firebase.db";
 import { cn } from "@/lib/utils";
 import { Penalty, SearchFilters } from "@/types";
-import { addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { LogIn, Plus } from "lucide-react";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { LogIn } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 

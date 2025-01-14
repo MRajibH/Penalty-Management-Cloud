@@ -12,7 +12,6 @@ import { Calendar } from "./ui/calendar";
 import { Textarea } from "./ui/textarea";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -23,10 +22,6 @@ import {
 import { penaltyCollectionRef } from "@/db/firebase.db";
 import { addDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-
-interface AddPenaltyFormProps {
-  onAdd: (penalty: Omit<Penalty, "id" | "status">) => void;
-}
 
 const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mobile", "Design"];
 
