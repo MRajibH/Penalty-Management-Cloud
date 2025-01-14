@@ -4,6 +4,7 @@ import { PenaltyCard } from "@/components/PenaltyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Stats } from "@/components/Stats";
 import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthContext } from "@/context/authContext";
 import { penaltyCollectionRef } from "@/db/firebase.db";
 import { cn } from "@/lib/utils";
@@ -53,8 +54,12 @@ const Dashboard = () => {
   const stats = {
     totalPenalties: penalties.length,
     totalAmount: penalties.reduce((sum, p) => sum + p.amount, 0),
-    pendingAmount: penalties.filter((p) => p.status === "PENDING").reduce((sum, p) => sum + p.amount, 0),
-    paidAmount: penalties.filter((p) => p.status === "PAID").reduce((sum, p) => sum + p.amount, 0),
+    pendingAmount: penalties
+      .filter((p) => p.status === "PENDING")
+      .reduce((sum, p) => sum + p.amount, 0),
+    paidAmount: penalties
+      .filter((p) => p.status === "PAID")
+      .reduce((sum, p) => sum + p.amount, 0),
   };
 
   const handleStatusChange = (id: string, newStatus: Penalty["status"]) => {
@@ -65,26 +70,35 @@ const Dashboard = () => {
   const filteredPenalties = useMemo(() => {
     return penalties.filter((penalty) => {
       const matchesSearch = filters.search
-        ? penalty.engineerName.toLowerCase().includes(filters.search.toLowerCase()) ||
+        ? penalty.engineerName
+            .toLowerCase()
+            .includes(filters.search.toLowerCase()) ||
           penalty.reason.toLowerCase().includes(filters.search.toLowerCase())
         : true;
 
-      const matchesDepartment = filters.department === "ALL" || penalty.department === filters.department;
-      const matchesStatus = filters.status === "ALL" || penalty.status === filters.status;
+      const matchesDepartment =
+        filters.department === "ALL" ||
+        penalty.department === filters.department;
+      const matchesStatus =
+        filters.status === "ALL" || penalty.status === filters.status;
 
       const matchesDateRange =
         (!filters.dateRange.start || penalty.date >= filters.dateRange.start) &&
         (!filters.dateRange.end || penalty.date <= filters.dateRange.end);
 
-      return matchesSearch && matchesDepartment && matchesStatus && matchesDateRange;
+      return (
+        matchesSearch && matchesDepartment && matchesStatus && matchesDateRange
+      );
     });
   }, [penalties, filters]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Penalty Management System</h1>
+    <div className="min-h-screen bg-slate-50">
+      <div className="mx-auto px-8 py-8">
+        {/* <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Penalty Management System
+          </h1>
 
           {isLoggedIn ? (
             <AddPenaltyForm />
@@ -101,18 +115,29 @@ const Dashboard = () => {
               <LogIn />
             </Link>
           )}
-        </div>
+        </div> */}
 
         <Stats stats={stats} />
 
-        <div className="space-y-4 mb-6">
-          <SearchBar value={filters.search} onChange={(value) => setFilters({ ...filters, search: value })} />
-          <Filters filters={filters} onFilterChange={setFilters} />
-        </div>
+        <Card>
+          <CardHeader className="flex flex-row gap-4">
+            <SearchBar
+              value={filters.search}
+              className="min-w-[450px]"
+              onChange={(value) => setFilters({ ...filters, search: value })}
+            />
+            <Filters filters={filters} onFilterChange={setFilters} />
+          </CardHeader>
+        </Card>
+        <div className="space-y-4 mb-6"></div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredPenalties.map((penalty) => (
-            <PenaltyCard key={penalty.id} penalty={penalty} onStatusChange={handleStatusChange} />
+            <PenaltyCard
+              key={penalty.id}
+              penalty={penalty}
+              onStatusChange={handleStatusChange}
+            />
           ))}
         </div>
 
