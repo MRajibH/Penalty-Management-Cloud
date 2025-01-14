@@ -1,9 +1,24 @@
-import { Braces, Inbox, Settings2, Users2 } from "lucide-react";
+import {
+  Book,
+  BookA,
+  BookAudio,
+  BookCheck,
+  BookDashed,
+  BookHeart,
+  BookOpen,
+  BookOpenCheck,
+  BookOpenText,
+  Braces,
+  Inbox,
+  Settings2,
+  Users2,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
+import { FaBookOpenReader } from "react-icons/fa6";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -69,6 +84,11 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
         isCollapsed={isCollapsed}
         links={[
           {
+            type: "label",
+            title: "Overview",
+          },
+          {
+            type: "link",
             title: "Dashboard",
             url: "/app/dashboard",
             label: "",
@@ -76,13 +96,19 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             variant: "default",
           },
           {
-            title: "Historical Data",
-            url: "/app/historical_data",
+            type: "link",
+            title: "Penalty Data",
+            url: "/app/penalty_data",
             label: "",
             icon: Braces,
             variant: "ghost",
           },
           {
+            type: "label",
+            title: "Management",
+          },
+          {
+            type: "link",
             title: "User Management",
             url: "/app/user_management",
             label: "",
@@ -90,6 +116,19 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             variant: "ghost",
           },
           {
+            type: "link",
+            title: "Manage Constitution",
+            url: "/app/manage_contitution",
+            label: "",
+            icon: BookOpen,
+            variant: "ghost",
+          },
+          {
+            type: "label",
+            title: "Settings",
+          },
+          {
+            type: "link",
             title: "Settings",
             url: "/app/settings",
             label: "",

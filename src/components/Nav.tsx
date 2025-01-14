@@ -4,16 +4,24 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 
+type links1 = {
+  type: "link";
+  url: string;
+  title: string;
+  label?: string;
+  icon: LucideIcon;
+  variant: "default" | "ghost";
+};
+
+type links2 = {
+  type: "label";
+  title: string;
+};
+
 interface NavProps {
   className?: string;
   isCollapsed: boolean;
-  links: {
-    url: string;
-    title: string;
-    label?: string;
-    icon: LucideIcon;
-    variant: "default" | "ghost";
-  }[];
+  links: (links1 | links2)[];
 }
 
 export function Nav({ links, className, isCollapsed }: NavProps) {
@@ -29,8 +37,15 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
     >
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) => {
-          const isActive = pathname === link.url;
+          if (link.type === "label") {
+            return (
+              <h6 className="text-xs font-bold text-gray-400 px-1 pt-2 pb-1">
+                {link.title}
+              </h6>
+            );
+          }
 
+          const isActive = pathname === link.url;
           return isCollapsed ? (
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>

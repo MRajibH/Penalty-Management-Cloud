@@ -11,7 +11,7 @@ const RootRouter = () => {
       <Route path="/app" element={<RootLayout />}>
         <Route index path="dashboard" element={<Dashboard />} />
         <Route element={<ProtectedRoutes />}>
-          <Route path="historical_data" element={<></>} />
+          <Route path="penalty_data" element={<></>} />
           <Route path="user_management" element={<></>} />
           <Route path="settings" element={<Settings />} />
         </Route>
