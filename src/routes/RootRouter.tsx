@@ -2,6 +2,7 @@ import { useAuthContext } from "@/context/authContext";
 import RootLayout from "@/layout/RootLayout";
 import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
+import Settings from "@/pages/Settings";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 const RootRouter = () => {
@@ -12,6 +13,7 @@ const RootRouter = () => {
         <Route element={<ProtectedRoutes />}>
           <Route path="historical_data" element={<></>} />
           <Route path="user_management" element={<></>} />
+          <Route path="settings" element={<Settings />} />
         </Route>
       </Route>
       <Route element={<UnAuthRoutes />}>

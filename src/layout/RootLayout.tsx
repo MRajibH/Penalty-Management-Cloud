@@ -76,7 +76,7 @@ const RootLayout = () => {
               </div>
             </div>
             <Separator />
-            <ScrollArea className="h-full">
+            <ScrollArea className="h-full p-4 bg-slate-0">
               <Outlet />
             </ScrollArea>
           </ResizablePanel>

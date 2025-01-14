@@ -93,8 +93,8 @@ const Dashboard = () => {
   }, [penalties, filters]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto px-8 py-8">
+    <div className="min-h-screen p-4">
+      <div className="">
         {/* <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
             Penalty Management System

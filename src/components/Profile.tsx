@@ -9,7 +9,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { PiCaretUpDownBold } from "react-icons/pi";
-import { Keyboard, Settings2, User } from "lucide-react";
+import { Settings2, User } from "lucide-react";
 import { FiLogOut } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 
@@ -61,10 +61,6 @@ const Profile = ({ className, iconOnly = false }: ProfileProps) => {
             <DropdownMenuItem>
               <Settings2 />
               Settings
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Keyboard />
-              Keyboard shortcuts
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />

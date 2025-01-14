@@ -1,4 +1,4 @@
-import { Braces, Inbox, Users2 } from "lucide-react";
+import { Braces, Inbox, Settings2, Users2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
@@ -87,6 +87,13 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             url: "/app/user_management",
             label: "",
             icon: Users2,
+            variant: "ghost",
+          },
+          {
+            title: "Settings",
+            url: "/app/settings",
+            label: "",
+            icon: Settings2,
             variant: "ghost",
           },
         ]}
