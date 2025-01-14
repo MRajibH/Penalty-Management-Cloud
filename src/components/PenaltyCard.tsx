@@ -31,7 +31,7 @@ export function PenaltyCard({ penalty, onStatusChange }: PenaltyCardProps) {
       }
 
       case "PENDING": {
-        return "bg-slate-300";
+        return "bg-slate-200";
       }
 
       case "DISPUTED": {
@@ -71,7 +71,7 @@ export function PenaltyCard({ penalty, onStatusChange }: PenaltyCardProps) {
             <div>
               <span
                 className={cn(
-                  "flex items-center gap-2 text-xs font-bold bg-slate-300 pl-2.5 pr-3 py-2 rounded-full",
+                  "flex items-center gap-2 text-xs font-bold bg-slate-300 pl-2.5 pr-3.5 py-2 rounded-full",
                   getStatusBgColor(penalty.status)
                 )}
               >
