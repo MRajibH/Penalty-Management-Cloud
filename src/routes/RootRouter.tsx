@@ -1,9 +1,9 @@
 import { useAuthContext } from "@/context/authContext";
 import RootLayout from "@/layout/RootLayout";
-import Dashboard from "@/pages/Dashboard";
-import Login from "@/pages/Login";
-import PenaltyData from "@/pages/PenaltyData";
-import Settings from "@/pages/Settings";
+import Dashboard from "@/pages/dashboard";
+import Login from "@/pages/login";
+import PenaltyData from "@/pages/penalty-data";
+import Settings from "@/pages/settings";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 const RootRouter = () => {

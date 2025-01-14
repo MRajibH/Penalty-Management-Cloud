@@ -76,9 +76,10 @@ const RootLayout = () => {
               </div>
             </div>
             <Separator />
-            <ScrollArea className="h-full p-4 bg-slate-0">
+
+            <div className="p-4 h-full overflow-auto">
               <Outlet />
-            </ScrollArea>
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </TooltipProvider>

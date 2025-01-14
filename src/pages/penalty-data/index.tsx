@@ -2,6 +2,7 @@ import { Filters } from "@/components/Filters";
 import { PenaltyCard } from "@/components/PenaltyCard";
 import { SearchBar } from "@/components/SearchBar";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { penaltyCollectionRef } from "@/db/firebase.db";
 import { Penalty, SearchFilters } from "@/types";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
@@ -75,7 +76,7 @@ const PenaltyData = () => {
   }, [penalties, filters]);
 
   return (
-    <div>
+    <div className="grid gap-4 overflow-auto">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -92,16 +93,19 @@ const PenaltyData = () => {
           </div>
         </CardHeader>
       </Card>
-      <div className="space-y-4 mb-6"></div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {filteredPenalties.map((penalty) => (
-          <PenaltyCard
-            key={penalty.id}
-            penalty={penalty}
-            onStatusChange={handleStatusChange}
-          />
-        ))}
+      <Separator />
+
+      <div className="overflow-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredPenalties.map((penalty) => (
+            <PenaltyCard
+              key={penalty.id}
+              penalty={penalty}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+        </div>
       </div>
 
       {filteredPenalties.length === 0 && (
