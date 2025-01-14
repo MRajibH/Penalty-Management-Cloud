@@ -1,0 +1,81 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { PiCaretUpDownBold } from "react-icons/pi";
+import { Keyboard, Settings2, User } from "lucide-react";
+import { FiLogOut } from "react-icons/fi";
+import { cn } from "@/lib/utils";
+
+interface ProfileProps {
+  iconOnly?: boolean;
+  className?: string;
+}
+
+const Profile = ({ className, iconOnly = false }: ProfileProps) => {
+  console.log(className);
+
+  return (
+    <div className={cn("", className)}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div className="cursor-pointer">
+            <div className="p-1 rounded-md flex items-center gap-3">
+              <Avatar className="w-9 h-9">
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="@shadcn"
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+
+              {!iconOnly && (
+                <>
+                  <div className="w-full">
+                    <h3 className="text-xs font-bold">Abu Sayed Polin</h3>
+                    <p className="text-xs text-gray-500">Admin | Devsecops</p>
+                  </div>
+
+                  <div>
+                    <PiCaretUpDownBold className="w-4 h-4 text-gray-500" />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem>
+              <User />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Settings2 />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Keyboard />
+              Keyboard shortcuts
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-red-600 hover:text-red-600 hover:bg-red-50">
+            <FiLogOut />
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+};
+
+export default Profile;
