@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 
 interface NavProps {
+  className?: string;
   isCollapsed: boolean;
   links: {
     url: string;
@@ -15,13 +16,16 @@ interface NavProps {
   }[];
 }
 
-export function Nav({ links, isCollapsed }: NavProps) {
+export function Nav({ links, className, isCollapsed }: NavProps) {
   const { pathname } = useLocation();
 
   return (
     <div
       data-collapsed={isCollapsed}
-      className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
+      className={cn(
+        "group flex-1 flex flex-col gap-4 py-2 data-[collapsed=true]:py-2",
+        className
+      )}
     >
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) => {
@@ -61,9 +65,9 @@ export function Nav({ links, isCollapsed }: NavProps) {
               to={link.url}
               className={cn(
                 buttonVariants({ variant: isActive ? "default" : "ghost" }),
+                "justify-start text-gray-600",
                 isActive &&
-                  "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
-                "justify-start"
+                  "text-white dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
               )}
             >
               <link.icon className="mr-2 h-4 w-4" />
