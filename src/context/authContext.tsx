@@ -13,7 +13,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const sign_in = ({ user, pass }: { user: string; pass: string }) => {
     return new Promise((resolve, reject) => {
-      if (user === "admin" && pass === "brotecs1230") {
+      if (user === "admin" && pass === "brotecs@!230") {
         setIsLoggedIn(true);
         resolve(true);
       } else {
