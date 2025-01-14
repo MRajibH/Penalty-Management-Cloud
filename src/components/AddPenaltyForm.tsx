@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import { Textarea } from "./ui/textarea";
-import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 
 interface AddPenaltyFormProps {
   onAdd: (penalty: Omit<Penalty, "id" | "status">) => void;
@@ -142,9 +142,11 @@ export function AddPenaltyForm({ onAdd }: AddPenaltyFormProps) {
         </div>
 
         <DialogFooter>
-          <Button variant={"default"} type="submit">
-            Add Penalty
-          </Button>
+          <DialogClose>
+            <Button variant={"default"} type="submit">
+              Add Penalty
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </form>
     </DialogContent>
