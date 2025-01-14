@@ -76,7 +76,7 @@ const PenaltyData = () => {
   }, [penalties, filters]);
 
   return (
-    <div className="grid gap-4 overflow-auto">
+    <div className="grid gap-4">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -96,7 +96,7 @@ const PenaltyData = () => {
 
       <Separator />
 
-      <div className="overflow-auto">
+      <div className="">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredPenalties.map((penalty) => (
             <PenaltyCard

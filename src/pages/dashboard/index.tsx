@@ -3,6 +3,10 @@ import { penaltyCollectionRef } from "@/db/firebase.db";
 import { Penalty } from "@/types";
 import { onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import PenaltyBarChart from "./components/PenaltyBarChart";
+import PenaltyPieChart from "./components/PenaltyPieChart";
+import PenaltyBarChartHorizontal from "./components/PenaltyBarChartHorizontal";
+import PenaltyBarChartExtended from "./components/PenaltyBarChartExtended";
 
 const Dashboard = () => {
   const [penalties, setPenalties] = useState<Penalty[]>([]);
@@ -62,6 +66,12 @@ const Dashboard = () => {
         </div> */}
 
         <Stats stats={stats} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <PenaltyPieChart />
+          <PenaltyBarChart />
+          <PenaltyBarChartHorizontal />
+          <PenaltyBarChartExtended />
+        </div>
       </div>
     </div>
   );
