@@ -1,9 +1,9 @@
-import * as React from "react";
-import { Braces, Inbox, LogOut, Users2 } from "lucide-react";
+import { Braces, Inbox, Users2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Separator } from "./ui/separator";
 import { Nav } from "./Nav";
+import Profile from "./Profile";
+import { Separator } from "./ui/separator";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -51,23 +51,21 @@ export const Logo = ({ className }: { className?: string }) => (
 
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
-    <React.Fragment>
+    <div className="flex flex-col h-full">
       <div
-        className={cn(
-          "flex h-[52px] items-center justify-center",
-          isCollapsed ? "h-[52px]" : "px-2"
-        )}
+        className={cn("flex items-center h-[52px]", isCollapsed ? "" : "px-2")}
       >
-        <Logo className={isCollapsed ? "mr-0" : "mr-4"} />
+        {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && (
-          <h3 className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-            Penalty Management System
-          </h3>
+          <h3 className="font-bold text-xl">Penalty Management</h3>
         )}
         {/* <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} /> */}
       </div>
+
       <Separator />
+
       <Nav
+        className="px-1 py-4"
         isCollapsed={isCollapsed}
         links={[
           {
@@ -94,18 +92,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
         ]}
       />
       <Separator />
-      <Nav
-        isCollapsed={isCollapsed}
-        links={[
-          {
-            title: "Logout",
-            url: "logout",
-            label: "",
-            icon: LogOut,
-            variant: "ghost",
-          },
-        ]}
-      />
-    </React.Fragment>
+      <Profile className="p-3" />
+    </div>
   );
 };
