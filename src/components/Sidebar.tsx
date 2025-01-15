@@ -3,7 +3,7 @@ import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
 import { BookOpen, Home, Settings2, Users2 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "../assets/logo.png";
 interface SidebarProps {
   isCollapsed: boolean;
 }
@@ -57,7 +57,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
           isCollapsed ? "justify-center" : "px-2"
         )}
       >
-        <img src={logo} className="w-8 mx-2" />
+        <img src={"/Penalty-Management-Cloud/logo.png"} className="w-8 mx-2" />
         {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && (
           <h3 className="font-bold text-xl">Penalty Management</h3>
