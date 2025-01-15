@@ -3,6 +3,7 @@ import RootLayout from "@/layout/RootLayout";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
+import UserManagement from "@/pages/user-management";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
 const RootRouter = () => {
@@ -10,10 +11,11 @@ const RootRouter = () => {
     <Routes>
       <Route path="/app" element={<RootLayout />}>
         <Route index path="dashboard" element={<Dashboard />} />
-        <Route element={<ProtectedRoutes />}>
-          <Route path="user_management" element={<></>} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+        {/* <Route element={<ProtectedRoutes />}> */}
+        <Route path="user_management" element={<UserManagement />} />
+        <Route path="manage_contitution" element={<></>} />
+        <Route path="settings" element={<Settings />} />
+        {/* </Route> */}
       </Route>
       <Route element={<UnAuthRoutes />}>
         <Route path="/login" element={<Login />} />

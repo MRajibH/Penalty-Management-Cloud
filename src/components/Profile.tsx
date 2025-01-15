@@ -19,8 +19,6 @@ interface ProfileProps {
 }
 
 const Profile = ({ className, iconOnly = false }: ProfileProps) => {
-  console.log(className);
-
   return (
     <div className={cn("", className)}>
       <DropdownMenu>
@@ -38,7 +36,7 @@ const Profile = ({ className, iconOnly = false }: ProfileProps) => {
               {!iconOnly && (
                 <>
                   <div className="w-full">
-                    <h3 className="text-xs font-bold">Abu Sayed Polin</h3>
+                    <h3 className="text-xs font-bold">Brotecs</h3>
                     <p className="text-xs text-gray-500">Admin | Devsecops</p>
                   </div>
 

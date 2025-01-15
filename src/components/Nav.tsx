@@ -41,7 +41,10 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
             if (isCollapsed) return <></>;
 
             return (
-              <h6 className="text-xs font-bold text-gray-400 px-1 pt-2 pb-1">
+              <h6
+                key={index}
+                className="text-xs font-bold text-gray-400 px-1 pt-2 pb-1"
+              >
                 {link.title}
               </h6>
             );

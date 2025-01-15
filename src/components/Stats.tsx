@@ -15,6 +15,19 @@ type GenericStatsProps = {
 };
 
 const GenericStats = ({ label, count, icon, color }: GenericStatsProps) => {
+  const getBg = (color: GenericStatsProps["color"]) => {
+    switch (color) {
+      case "blue":
+        return "bg-gradient-to-r from-blue-100";
+      case "green":
+        return "bg-gradient-to-r from-green-100";
+      case "cyan":
+        return "bg-gradient-to-r from-cyan-100";
+      case "yellow":
+        return "bg-gradient-to-r from-yellow-100";
+    }
+  };
+
   return (
     <>
       <Card className="relative flex items-center overflow-hidden min-h-32">
@@ -25,7 +38,9 @@ const GenericStats = ({ label, count, icon, color }: GenericStatsProps) => {
           </CardDescription>
         </CardHeader>
         <div
-          className={`absolute h-28 w-40 bg-gradient-to-r from-${color}-100 rounded-3xl rotate-45 right-[-80px]`}
+          className={`absolute h-28 w-40 bg-gradient-to-r rounded-3xl rotate-45 right-[-80px] ${getBg(
+            color
+          )}`}
         />
         <div className="absolute right-[30px] top-9">{icon}</div>
       </Card>

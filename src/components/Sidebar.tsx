@@ -3,8 +3,7 @@ import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
 import { BookOpen, Home, Settings2, Users2 } from "lucide-react";
-import logo from "../../public/red-card.png";
-
+import logo from "@/assets/logo.png";
 interface SidebarProps {
   isCollapsed: boolean;
 }

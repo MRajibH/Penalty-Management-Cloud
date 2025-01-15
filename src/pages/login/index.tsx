@@ -35,8 +35,6 @@ const LoginView = () => {
         variant: "destructive",
       });
     }
-
-    console.log({ user, pass });
   };
 
   return (

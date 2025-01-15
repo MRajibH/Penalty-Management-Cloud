@@ -96,7 +96,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container p-6 mx-auto grid min-h-screen gap-8">
+    <div className="container p-6 mx-auto grid gap-8">
       <div className="flex justify-between items-center ">
         <h1 className="text-3xl font-bold text-gray-900">
           Penalty Management System
