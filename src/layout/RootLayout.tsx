@@ -28,7 +28,7 @@ const RootLayout = () => {
   }, [pathname]);
 
   return (
-    <div className="h-screen">
+    <div className="h-screen overflow-auto">
       <TooltipProvider delayDuration={0}>
         <ResizablePanelGroup
           direction="horizontal"
@@ -43,7 +43,7 @@ const RootLayout = () => {
             defaultSize={defaultLayout[0]}
             collapsedSize={navCollapsedSize}
             collapsible={true}
-            minSize={8}
+            minSize={11}
             maxSize={14}
             onCollapse={() => {
               setIsCollapsed(true);
@@ -66,7 +66,7 @@ const RootLayout = () => {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
-            <div className="h-[52px] flex items-center justify-between px-8">
+            <div className="h-[52px] flex items-center justify-between px-8 overflow-auto">
               <h2 className="font-bold text-lg">Dashboard</h2>
 
               <div className="flex items-center gap-2">
@@ -77,8 +77,10 @@ const RootLayout = () => {
             </div>
             <Separator />
 
-            <ScrollArea className="h-full">
-              <Outlet />
+            <ScrollArea>
+              <div className="h-[calc(100vh-60px)]">
+                <Outlet />
+              </div>
             </ScrollArea>
           </ResizablePanel>
         </ResizablePanelGroup>

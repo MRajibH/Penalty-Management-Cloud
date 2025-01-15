@@ -2,7 +2,6 @@ import { useAuthContext } from "@/context/authContext";
 import RootLayout from "@/layout/RootLayout";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
-import PenaltyData from "@/pages/penalty-data";
 import Settings from "@/pages/settings";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 
@@ -12,7 +11,6 @@ const RootRouter = () => {
       <Route path="/app" element={<RootLayout />}>
         <Route index path="dashboard" element={<Dashboard />} />
         <Route element={<ProtectedRoutes />}>
-          <Route path="penalty_data" element={<PenaltyData />} />
           <Route path="user_management" element={<></>} />
           <Route path="settings" element={<Settings />} />
         </Route>

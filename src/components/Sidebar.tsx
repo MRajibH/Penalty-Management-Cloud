@@ -1,24 +1,9 @@
-import {
-  Book,
-  BookA,
-  BookAudio,
-  BookCheck,
-  BookDashed,
-  BookHeart,
-  BookOpen,
-  BookOpenCheck,
-  BookOpenText,
-  Braces,
-  Inbox,
-  Settings2,
-  Users2,
-} from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
-import { FaBookOpenReader } from "react-icons/fa6";
+import { BookOpen, Home, Settings2, Users2 } from "lucide-react";
+import logo from "../../public/red-card.png";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -68,8 +53,12 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
     <div className="flex flex-col h-full">
       <div
-        className={cn("flex items-center h-[52px]", isCollapsed ? "" : "px-2")}
+        className={cn(
+          "flex items-center h-[52px]",
+          isCollapsed ? "justify-center" : "px-2"
+        )}
       >
+        <img src={logo} className="w-8 mx-2" />
         {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && (
           <h3 className="font-bold text-xl">Penalty Management</h3>
@@ -92,16 +81,8 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             title: "Dashboard",
             url: "/app/dashboard",
             label: "",
-            icon: Inbox,
+            icon: Home,
             variant: "default",
-          },
-          {
-            type: "link",
-            title: "Penalty Data",
-            url: "/app/penalty_data",
-            label: "",
-            icon: Braces,
-            variant: "ghost",
           },
           {
             type: "label",
@@ -138,7 +119,10 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
         ]}
       />
       <Separator />
-      <Profile className="p-3" />
+      <Profile
+        className={`p-3 mx-${isCollapsed ? "auto" : "0"}`}
+        iconOnly={isCollapsed}
+      />
     </div>
   );
 };

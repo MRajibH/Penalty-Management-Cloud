@@ -38,6 +38,8 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) => {
           if (link.type === "label") {
+            if (isCollapsed) return <></>;
+
             return (
               <h6 className="text-xs font-bold text-gray-400 px-1 pt-2 pb-1">
                 {link.title}
@@ -82,7 +84,7 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
                 buttonVariants({ variant: isActive ? "default" : "ghost" }),
                 "justify-start text-gray-600",
                 isActive &&
-                  "text-white dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
+                  "text-white  dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white"
               )}
             >
               <link.icon className="mr-2 h-4 w-4" />
