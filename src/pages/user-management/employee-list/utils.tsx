@@ -1,6 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import EmployeeForm from "./EmployeeForm";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
+// import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
 import useBoolean from "@/hooks/use-boolean";
 
 export const CreateEmployee = () => {
@@ -67,7 +66,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "avatar",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="User" />
+      <DataTableColumnHeader column={column} title="Avater" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("avatar")}</div>,
     enableSorting: false,
@@ -113,8 +112,8 @@ export const columns: ColumnDef<any>[] = [
     enableSorting: true,
     enableHiding: true,
   },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => <DataTableRowActions row={row} />,
+  // },
 ];
