@@ -65,8 +65,17 @@ const DepartmentForm = ({ onClose }: DepartmentFormProps) => {
       });
 
       onClose();
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      toast({
+        title: "Something went wrong",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(err?.message || err, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
     } finally {
       setLoading(false);
     }

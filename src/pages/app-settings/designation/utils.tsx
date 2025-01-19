@@ -13,6 +13,7 @@ import {
 import useBoolean from "@/hooks/use-boolean";
 import { ColumnDef } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
+import DesignationForm from "./DesignationForm";
 
 export const CreateDesignation = () => {
   const { open, setOpen, onClose } = useBoolean(false);
@@ -30,7 +31,7 @@ export const CreateDesignation = () => {
           <DialogTitle>Add Designation</DialogTitle>
           <DialogDescription>Create a new designation.</DialogDescription>
         </DialogHeader>
-        {/* <EmployeeForm /> */}
+        <DesignationForm onClose={onClose} />
       </DialogContent>
     </Dialog>
   );
@@ -73,12 +74,12 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "department",
+    accessorKey: "department_name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Department" />
     ),
     cell: ({ row }) => (
-      <div className="w-full">{row.getValue("department")}</div>
+      <div className="w-full">{row.getValue("department_name")}</div>
     ),
     enableSorting: true,
     enableHiding: true,
