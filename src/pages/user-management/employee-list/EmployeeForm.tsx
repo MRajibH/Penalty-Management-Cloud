@@ -163,7 +163,7 @@ const EmployeeForm = ({ onClose }: EmployeeFormProps) => {
                               className="h-9"
                             />
                             <CommandList>
-                              <CommandEmpty>No framework found.</CommandEmpty>
+                              <CommandEmpty>No designation found.</CommandEmpty>
                               <CommandGroup>
                                 {designations.map(
                                   ({ id, designation_name }) => (
@@ -192,7 +192,9 @@ const EmployeeForm = ({ onClose }: EmployeeFormProps) => {
                           </Command>
                         </PopoverContent>
                       </Popover>
-                      <FormDescription>{description}</FormDescription>
+                      <FormDescription>
+                        {designations.length === 0 ? description : ""}
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -261,7 +263,8 @@ const fields: fieldType[] = [
   {
     name: "designation_id",
     label: "Designation",
-    description: "",
+    description:
+      "NB : If there is no designation created, you need to create a designation first.",
     inputType: "select",
   },
 ];

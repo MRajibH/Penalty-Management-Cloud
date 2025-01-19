@@ -154,7 +154,7 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
                                 />
                                 <CommandList>
                                   <CommandEmpty>
-                                    No framework found.
+                                    No department found.
                                   </CommandEmpty>
                                   <CommandGroup>
                                     {departments.map(
@@ -187,7 +187,9 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
                               </Command>
                             </PopoverContent>
                           </Popover>
-                          <FormDescription>{description}</FormDescription>
+                          <FormDescription>
+                            {departments.length === 0 ? description : ""}
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
