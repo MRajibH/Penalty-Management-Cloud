@@ -3,7 +3,15 @@ import { CalendarIcon, Plus } from "lucide-react";
 import { Department, Penalty } from "../types";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
@@ -23,7 +31,14 @@ import { penaltyCollectionRef } from "@/db/firebase.db";
 import { addDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 
-const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mobile", "Design"];
+const departments: Department[] = [
+  "Frontend",
+  "Backend",
+  "DevSecOps",
+  "QA",
+  "Mobile",
+  "Design",
+];
 
 const getInitialValue = () => {
   return {
@@ -80,7 +95,8 @@ export function AddPenaltyForm() {
         <DialogHeader>
           <DialogTitle>Add new penalty</DialogTitle>
           <DialogDescription>
-            Create, customize, and assign a new penalty for specific rule violations.
+            Create, customize, and assign a new penalty for specific rule
+            violations.
           </DialogDescription>
         </DialogHeader>
 
@@ -92,7 +108,9 @@ export function AddPenaltyForm() {
               type="text"
               value={formData.engineerName}
               placeholder="Enter engineer's name"
-              onChange={(e) => setFormData({ ...formData, engineerName: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, engineerName: e.target.value })
+              }
             />
           </div>
 
@@ -101,7 +119,9 @@ export function AddPenaltyForm() {
             <Select
               required
               value={formData.department}
-              onValueChange={(value) => setFormData({ ...formData, department: value as Department })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, department: value as Department })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a Department" />
@@ -126,7 +146,9 @@ export function AddPenaltyForm() {
               required
               value={formData.reason}
               placeholder="Enter a reason"
-              onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, reason: e.target.value })
+              }
             />
           </div>
 
@@ -139,7 +161,9 @@ export function AddPenaltyForm() {
               step="0.01"
               value={formData.amount}
               placeholder="Enter a amount"
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, amount: e.target.value })
+              }
             />
           </div>
 
@@ -147,8 +171,15 @@ export function AddPenaltyForm() {
             <Label className="px-0.5">Date</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal")}>
-                  {formData.date ? format(formData.date, "PPP") : <span>Pick a date</span>}
+                <Button
+                  variant={"outline"}
+                  className={cn("w-full pl-3 text-left font-normal")}
+                >
+                  {formData.date ? (
+                    format(formData.date, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -157,7 +188,10 @@ export function AddPenaltyForm() {
                   mode="single"
                   onSelect={(date) => {
                     const year = date?.getFullYear();
-                    const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
+                    const month = String((date?.getMonth() || 0) + 1).padStart(
+                      2,
+                      "0"
+                    ); // Months are 0-indexed
                     const day = String(date?.getDate()).padStart(2, "0"); // Day of the month
                     const value = `${year}-${month}-${day}`;
 
@@ -167,7 +201,9 @@ export function AddPenaltyForm() {
                     });
                   }}
                   selected={new Date(formData.date)}
-                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
                 />
               </PopoverContent>
             </Popover>
@@ -178,11 +214,23 @@ export function AddPenaltyForm() {
             <Textarea
               rows={3}
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
             />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2">
+            <Button
+              type="reset"
+              variant={"outline"}
+              onClick={() => {
+                onOpen(false);
+                setFormData(getInitialValue());
+              }}
+            >
+              Close
+            </Button>
             <Button variant={"default"} type="submit" loading={loading}>
               Add Penalty
             </Button>

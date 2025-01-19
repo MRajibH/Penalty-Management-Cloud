@@ -1,10 +1,9 @@
-import * as React from "react";
-import { Braces, Inbox, LogOut, Users2 } from "lucide-react";
-
 import { cn } from "@/lib/utils";
-import { Separator } from "./ui/separator";
 import { Nav } from "./Nav";
-
+import Profile from "./Profile";
+import { Separator } from "./ui/separator";
+import { BookOpen, Home, Settings2, Users2 } from "lucide-react";
+import logo from "@/assets/logo.png";
 interface SidebarProps {
   isCollapsed: boolean;
 }
@@ -51,61 +50,78 @@ export const Logo = ({ className }: { className?: string }) => (
 
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
-    <React.Fragment>
+    <div className="flex flex-col h-full">
       <div
         className={cn(
-          "flex h-[52px] items-center justify-center",
-          isCollapsed ? "h-[52px]" : "px-2"
+          "flex items-center h-[52px]",
+          isCollapsed ? "justify-center" : "px-2"
         )}
       >
-        <Logo className={isCollapsed ? "mr-0" : "mr-4"} />
+        <img src={logo} className="w-8 mx-2" />
+        {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && (
-          <h3 className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-            Penalty Management System
-          </h3>
+          <h3 className="font-bold text-xl">Penalty Management</h3>
         )}
         {/* <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} /> */}
       </div>
+
       <Separator />
+
       <Nav
+        className="px-1 py-4"
         isCollapsed={isCollapsed}
         links={[
           {
+            type: "label",
+            title: "Overview",
+          },
+          {
+            type: "link",
             title: "Dashboard",
             url: "/app/dashboard",
             label: "",
-            icon: Inbox,
+            icon: Home,
             variant: "default",
           },
           {
-            title: "Historical Data",
-            url: "/app/historical_data",
-            label: "",
-            icon: Braces,
-            variant: "ghost",
+            type: "label",
+            title: "Management",
           },
           {
+            type: "link",
             title: "User Management",
             url: "/app/user_management",
             label: "",
             icon: Users2,
             variant: "ghost",
           },
-        ]}
-      />
-      <Separator />
-      <Nav
-        isCollapsed={isCollapsed}
-        links={[
           {
-            title: "Logout",
-            url: "logout",
+            type: "link",
+            title: "Manage Constitution",
+            url: "/app/manage_contitution",
             label: "",
-            icon: LogOut,
+            icon: BookOpen,
+            variant: "ghost",
+          },
+          {
+            type: "label",
+            title: "Settings",
+          },
+          {
+            type: "link",
+            title: "Settings",
+            url: "/app/settings",
+            label: "",
+            icon: Settings2,
             variant: "ghost",
           },
         ]}
       />
-    </React.Fragment>
+      <Separator />
+      <Profile
+        className={`p-3 mx-${isCollapsed ? "auto" : "0"}`}
+        iconOnly={isCollapsed}
+      />
+    </div>
   );
 };

@@ -1,67 +1,94 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    darkMode: ['class'],
-    content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: ["class"],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-  	extend: {
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		},
-  		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		}
-  	}
+    extend: {
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          1: "hsl(var(--chart-1))",
+          2: "hsl(var(--chart-2))",
+          3: "hsl(var(--chart-3))",
+          4: "hsl(var(--chart-4))",
+          5: "hsl(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
+        boxShadow: {
+          0: "none",
+          1: "0px 2px 1px -1px rgba(145, 158, 171, 0.2), 0px 1px 1px 0px rgba(145, 158, 171, 0.14), 0px 1px 3px 0px rgba(145, 158, 171, 0.12)",
+          2: "0px 3px 1px -2px rgba(145, 158, 171, 0.2), 0px 2px 2px 0px rgba(145, 158, 171, 0.14), 0px 1px 5px 0px rgba(145, 158, 171, 0.12)",
+          3: "0px 3px 3px -2px rgba(145, 158, 171, 0.2), 0px 3px 4px 0px rgba(145, 158, 171, 0.14), 0px 1px 8px 0px rgba(145, 158, 171, 0.12)",
+          4: "0px 2px 4px -1px rgba(145, 158, 171, 0.2), 0px 4px 5px 0px rgba(145, 158, 171, 0.14), 0px 1px 10px 0px rgba(145, 158, 171, 0.12)",
+          5: "0px 3px 5px -1px rgba(145, 158, 171, 0.2), 0px 5px 8px 0px rgba(145, 158, 171, 0.14), 0px 1px 14px 0px rgba(145, 158, 171, 0.12)",
+          6: "0px 3px 5px -1px rgba(145, 158, 171, 0.2), 0px 6px 10px 0px rgba(145, 158, 171, 0.14), 0px 1px 18px 0px rgba(145, 158, 171, 0.12)",
+          7: "0px 4px 5px -2px rgba(145, 158, 171, 0.2), 0px 7px 10px 1px rgba(145, 158, 171, 0.14), 0px 2px 16px 1px rgba(145, 158, 171, 0.12)",
+          8: "0px 5px 5px -3px rgba(145, 158, 171, 0.2), 0px 8px 10px 1px rgba(145, 158, 171, 0.14), 0px 3px 14px 2px rgba(145, 158, 171, 0.12)",
+          9: "0px 5px 6px -3px rgba(145, 158, 171, 0.2), 0px 9px 12px 1px rgba(145, 158, 171, 0.14), 0px 3px 16px 2px rgba(145, 158, 171, 0.12)",
+          10: "0px 6px 6px -3px rgba(145, 158, 171, 0.2), 0px 10px 14px 1px rgba(145, 158, 171, 0.14), 0px 4px 18px 3px rgba(145, 158, 171, 0.12)",
+          11: "0px 6px 7px -4px rgba(145, 158, 171, 0.2), 0px 11px 15px 1px rgba(145, 158, 171, 0.14), 0px 4px 20px 3px rgba(145, 158, 171, 0.12)",
+          12: "0px 7px 8px -4px rgba(145, 158, 171, 0.2), 0px 12px 17px 2px rgba(145, 158, 171, 0.14), 0px 5px 22px 4px rgba(145, 158, 171, 0.12)",
+          13: "0px 7px 8px -4px rgba(145, 158, 171, 0.2), 0px 13px 19px 2px rgba(145, 158, 171, 0.14), 0px 5px 24px 4px rgba(145, 158, 171, 0.12)",
+          14: "0px 7px 9px -4px rgba(145, 158, 171, 0.2), 0px 14px 21px 2px rgba(145, 158, 171, 0.14), 0px 5px 26px 4px rgba(145, 158, 171, 0.12)",
+          15: "0px 8px 9px -5px rgba(145, 158, 171, 0.2), 0px 15px 22px 2px rgba(145, 158, 171, 0.14), 0px 6px 28px 5px rgba(145, 158, 171, 0.12)",
+          16: "0px 8px 10px -5px rgba(145, 158, 171, 0.2), 0px 16px 24px 2px rgba(145, 158, 171, 0.14), 0px 6px 30px 5px rgba(145, 158, 171, 0.12)",
+          17: "0px 8px 11px -5px rgba(145, 158, 171, 0.2), 0px 17px 26px 2px rgba(145, 158, 171, 0.14), 0px 6px 32px 5px rgba(145, 158, 171, 0.12)",
+          18: "0px 9px 11px -5px rgba(145, 158, 171, 0.2), 0px 18px 28px 2px rgba(145, 158, 171, 0.14), 0px 7px 34px 6px rgba(145, 158, 171, 0.12)",
+          19: "0px 9px 12px -6px rgba(145, 158, 171, 0.2), 0px 19px 29px 2px rgba(145, 158, 171, 0.14), 0px 7px 36px 6px rgba(145, 158, 171, 0.12)",
+          20: "0px 10px 13px -6px rgba(145, 158, 171, 0.2), 0px 20px 31px 3px rgba(145, 158, 171, 0.14), 0px 8px 38px 7px rgba(145, 158, 171, 0.12)",
+          21: "0px 10px 13px -6px rgba(145, 158, 171, 0.2), 0px 21px 33px 3px rgba(145, 158, 171, 0.14), 0px 8px 40px 7px rgba(145, 158, 171, 0.12)",
+          22: "0px 10px 14px -6px rgba(145, 158, 171, 0.2), 0px 22px 35px 3px rgba(145, 158, 171, 0.14), 0px 8px 42px 7px rgba(145, 158, 171, 0.12)",
+          23: "0px 11px 14px -7px rgba(145, 158, 171, 0.2), 0px 23px 36px 3px rgba(145, 158, 171, 0.14), 0px 9px 44px 8px rgba(145, 158, 171, 0.12)",
+          24: "0px 11px 15px -7px rgba(145, 158, 171, 0.2), 0px 24px 38px 3px rgba(145, 158, 171, 0.14), 0px 9px 46px 8px rgba(145, 158, 171, 0.12)",
+        },
+      },
+    },
   },
   plugins: [require("tailwindcss-animate")],
 };
