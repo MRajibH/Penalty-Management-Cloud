@@ -1,6 +1,6 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Table } from "@tanstack/react-table";
-import { Plus, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -10,27 +10,17 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Fragment, ReactNode } from "react";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
+  elements?: ReactNode[];
 }
 
 export function DataTableViewOptions<TData>({
   table,
+  elements = [],
 }: DataTableViewOptionsProps<TData>) {
-  const [open, onOpen] = useState(false);
-  const [loading] = useState(false);
-
   return (
     <div className="flex gap-4">
       <DropdownMenu>
@@ -67,35 +57,9 @@ export function DataTableViewOptions<TData>({
             })}
         </DropdownMenuContent>
       </DropdownMenu>
-      <Dialog open={open} onOpenChange={onOpen}>
-        <DialogTrigger asChild>
-          <Button size={"sm"}>
-            Add User
-            <Plus />
-          </Button>
-        </DialogTrigger>
-
-        <DialogContent className="sm:max-w-[450px]">
-          <DialogHeader>
-            <DialogTitle>Add User</DialogTitle>
-            <DialogDescription>Create a new user.</DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2">
-            <Button
-              type="reset"
-              variant={"outline"}
-              onClick={() => {
-                onOpen(false);
-              }}
-            >
-              Close
-            </Button>
-            <Button variant={"default"} type="submit" loading={loading}>
-              Create User
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {elements.map((element, i) => (
+        <Fragment key={i}>{element}</Fragment>
+      ))}
     </div>
   );
 }
