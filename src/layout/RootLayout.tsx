@@ -1,6 +1,7 @@
 import Profile from "@/components/Profile";
 import SearchBox from "@/components/SearchBox";
 import { Sidebar } from "@/components/Sidebar";
+import { buttonVariants } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -9,9 +10,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuthContext } from "@/context/authContext";
 import { cn } from "@/lib/utils";
+import { LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const navCollapsedSize = 4;
 const defaultLayout = [20, 32, 48];
@@ -19,6 +22,7 @@ const defaultLayout = [20, 32, 48];
 const RootLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { isLoggedIn } = useAuthContext();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -72,7 +76,23 @@ const RootLayout = () => {
               <div className="flex items-center gap-2">
                 <SearchBox />
                 <Separator orientation="vertical" className="h-[32px]" />
-                <Profile iconOnly />
+                {isLoggedIn ? (
+                  <Profile iconOnly />
+                ) : (
+                  <Link
+                    to={"/login"}
+                    className={cn(
+                      "ml-2",
+                      buttonVariants({
+                        size: "sm",
+                        variant: "default",
+                      })
+                    )}
+                  >
+                    Login
+                    <LogIn />
+                  </Link>
+                )}
               </div>
             </div>
             <Separator />

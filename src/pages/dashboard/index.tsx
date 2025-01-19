@@ -102,21 +102,7 @@ const Dashboard = () => {
           Penalty Management System
         </h1>
 
-        {isLoggedIn ? (
-          <AddPenaltyForm />
-        ) : (
-          <Link
-            to={"/login"}
-            className={cn(
-              buttonVariants({
-                variant: "default",
-              })
-            )}
-          >
-            Login
-            <LogIn />
-          </Link>
-        )}
+        {isLoggedIn && <AddPenaltyForm />}
       </div>
 
       <Stats stats={stats} />
