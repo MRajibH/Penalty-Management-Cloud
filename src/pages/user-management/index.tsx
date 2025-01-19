@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable } from "./component/DataTable";
 import { columns } from "./component/Column";
 import EmployeeList from "./employee-list";
+import { DataTable } from "@/components/data-table/DataTable";
 
 const UserManagement = () => {
   return (
@@ -13,7 +13,7 @@ const UserManagement = () => {
           <TabsTrigger value="role">Manage Roles</TabsTrigger>
         </TabsList>
         <TabsContent value="employee" className="mt-8">
-         <EmployeeList />
+          <EmployeeList />
         </TabsContent>
         <TabsContent value="user" className="mt-8">
           <DataTable data={data1} columns={columns} />

@@ -1,7 +1,42 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "../component/DataTableColumnHeader";
-import { DataTableRowActions } from "../component/DataTableRowActions";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import EmployeeForm from "./EmployeeForm";
+import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
+
+export const CreateEmployee = () => {
+  const [open, onOpen] = useState(false);
+  const [loading] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={onOpen}>
+      <DialogTrigger asChild>
+        <Button size={"sm"}>
+          Add Employee
+          <Plus />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[450px]">
+        <DialogHeader>
+          <DialogTitle>Add Employee</DialogTitle>
+          <DialogDescription>Create a new employee.</DialogDescription>
+        </DialogHeader>
+        <EmployeeForm />
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export const columns: ColumnDef<any>[] = [
   {

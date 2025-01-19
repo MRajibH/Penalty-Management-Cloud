@@ -2,7 +2,6 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableColumnHeader } from "./DataTableColumnHeader";
 import {
   ArrowDown,
   ArrowRight,
@@ -13,7 +12,8 @@ import {
   HelpCircle,
   Timer,
 } from "lucide-react";
-import { DataTableRowActions } from "./DataTableRowActions";
+import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
 
 export const labels = [
   {
