@@ -1,4 +1,12 @@
 import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
@@ -10,8 +18,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { designationType, useDataContext } from "@/context/dataContext";
+import { designationRef, employeeRef } from "@/db/firebase.db";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { addDoc, doc, getDoc } from "firebase/firestore";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,20 +40,21 @@ const EmployeeFormSchema = z.object({
     .min(4, { message: "Name must be greater then 3 characters." })
     .max(30, { message: "Name can not be longer than 30 characters." }),
   email: z.string().email("Must be a valid email address."),
-  designation: z
-    .string()
-    .min(4, { message: "Designation must be greater then 8 characters." })
-    .max(30, { message: "Designation can not be longer than 30 characters." }),
-  team: z
-    .string()
-    .min(4, { message: "Designation must be greater then 8 characters." })
-    .max(30, { message: "Designation can not be longer than 30 characters." }),
+  designation_id: z.string(),
 });
 
 type EmployeeFormSchemaType = z.infer<typeof EmployeeFormSchema>;
 
-const EmployeeForm = () => {
+interface EmployeeFormProps {
+  onClose: any;
+}
+
+const EmployeeForm = ({ onClose }: EmployeeFormProps) => {
   const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { designations } = useDataContext();
 
   const form = useForm<EmployeeFormSchemaType>({
     mode: "onChange",
@@ -42,16 +62,40 @@ const EmployeeForm = () => {
     resolver: zodResolver(EmployeeFormSchema),
   });
 
-  function onSubmit(data: EmployeeFormSchemaType) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  const onSubmit = async (data: EmployeeFormSchemaType) => {
+    const { designation_id, ...rest_data } = data;
+    try {
+      setLoading(true);
+      const docRef = doc(designationRef, designation_id);
+      const designationSnapshot = await getDoc(docRef);
+      const designationData = designationSnapshot.data() as designationType;
+      const { department_name, designation_name } = designationData;
+
+      const new_data = {
+        department_name,
+        designation_name,
+        createdAt: new Date().getTime(),
+        modifiedAt: new Date().getTime(),
+        ...rest_data,
+      };
+
+      await addDoc(employeeRef, new_data);
+      onClose();
+    } catch (err: any) {
+      toast({
+        title: "Something went wrong",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(err?.message || err, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Form {...form}>
@@ -84,11 +128,6 @@ const EmployeeForm = () => {
             // ***
             // Select fields
             case "select":
-              return <>select</>;
-
-            // ***
-            // File fields
-            case "file":
               return (
                 <FormField
                   control={form.control}
@@ -96,33 +135,101 @@ const EmployeeForm = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          placeholder="Your full name here ..."
-                          {...field}
-                        />
-                      </FormControl>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? designations.find(
+                                    (designation) =>
+                                      designation.id === field.value
+                                  )?.designation_name
+                                : "Select designation"}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[400px] p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search designation..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No framework found.</CommandEmpty>
+                              <CommandGroup>
+                                {designations.map(
+                                  ({ id, designation_name }) => (
+                                    <CommandItem
+                                      key={id}
+                                      value={id}
+                                      onSelect={() => {
+                                        form.setValue("designation_id", id);
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      {designation_name}
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          id === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  )
+                                )}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <FormDescription>{description}</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               );
+
+            // ***
+            // File fields
+            // case "file":
+            //   return (
+            //     <FormField
+            //       control={form.control}
+            //       name={name}
+            //       render={({ field }) => (
+            //         <FormItem>
+            //           <FormLabel>{label}</FormLabel>
+            //           <FormControl>
+            //             <Input
+            //               type="file"
+            //               placeholder="Your full name here ..."
+            //               {...field}
+            //             />
+            //           </FormControl>
+            //           <FormDescription>{description}</FormDescription>
+            //           <FormMessage />
+            //         </FormItem>
+            //       )}
+            //     />
+            //   );
           }
         })}
 
         <DialogFooter className="gap-2">
-          <Button
-            type="reset"
-            variant={"outline"}
-            onClick={() => {
-              onOpen(false);
-            }}
-          >
+          <Button type="reset" variant={"outline"} onClick={onClose}>
             Close
           </Button>
-          <Button variant={"default"} type="submit">
+          <Button loading={loading} variant={"default"} type="submit">
             Create
           </Button>
         </DialogFooter>
@@ -135,7 +242,7 @@ type fieldType = {
   label: string;
   description: string;
   inputType: "text" | "select" | "file";
-  name: "name" | "email" | "designation" | "team";
+  name: "name" | "email" | "designation_id";
 };
 
 const fields: fieldType[] = [
@@ -152,22 +259,10 @@ const fields: fieldType[] = [
     inputType: "text",
   },
   {
-    name: "designation",
+    name: "designation_id",
     label: "Designation",
     description: "",
     inputType: "select",
-  },
-  {
-    name: "team",
-    label: "Team",
-    description: "",
-    inputType: "select",
-  },
-  {
-    name: "avater",
-    label: "User Photo",
-    description: "",
-    inputType: "file",
   },
 ];
 

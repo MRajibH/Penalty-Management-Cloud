@@ -3,8 +3,7 @@ import { columns, CreateDepartment } from "./utils";
 import { useDataContext } from "@/context/dataContext";
 
 const Department = () => {
-  const { appSettings } = useDataContext();
-  const { departments } = appSettings;
+  const { departments } = useDataContext();
 
   return (
     <DataTable

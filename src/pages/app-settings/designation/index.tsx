@@ -3,8 +3,7 @@ import { columns, CreateDesignation } from "./utils";
 import { useDataContext } from "@/context/dataContext";
 
 const Designation = () => {
-  const { appSettings } = useDataContext();
-  const { designations } = appSettings;
+  const { designations } = useDataContext();
 
   return (
     <DataTable

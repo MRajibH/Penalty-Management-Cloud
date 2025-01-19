@@ -14,12 +14,13 @@ import { Plus } from "lucide-react";
 import EmployeeForm from "./EmployeeForm";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
+import useBoolean from "@/hooks/use-boolean";
 
 export const CreateEmployee = () => {
-  const [open, onOpen] = useState(false);
-  const [loading] = useState(false);
+  const { open, setOpen, onClose } = useBoolean();
+
   return (
-    <Dialog open={open} onOpenChange={onOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size={"sm"}>
           Add Employee
@@ -32,7 +33,7 @@ export const CreateEmployee = () => {
           <DialogTitle>Add Employee</DialogTitle>
           <DialogDescription>Create a new employee.</DialogDescription>
         </DialogHeader>
-        <EmployeeForm />
+        <EmployeeForm onClose={onClose} />
       </DialogContent>
     </Dialog>
   );
@@ -91,22 +92,24 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: true,
   },
   {
-    accessorKey: "designation",
+    accessorKey: "designation_name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Designation" />
     ),
     cell: ({ row }) => (
-      <div className="w-[200px]">{row.getValue("designation")}</div>
+      <div className="w-[200px]">{row.getValue("designation_name")}</div>
     ),
     enableSorting: true,
     enableHiding: true,
   },
   {
-    accessorKey: "team",
+    accessorKey: "department_name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Team" />
+      <DataTableColumnHeader column={column} title="Department" />
     ),
-    cell: ({ row }) => <div className="w-[120px]">{row.getValue("team")}</div>,
+    cell: ({ row }) => (
+      <div className="w-[120px]">{row.getValue("department_name")}</div>
+    ),
     enableSorting: true,
     enableHiding: true,
   },

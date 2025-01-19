@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -11,9 +10,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { settingsCollectionRef } from "@/db/firebase.db";
+import { designationRef } from "@/db/firebase.db";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { addDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -52,8 +51,7 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { appSettings } = useDataContext();
-  const { departments } = appSettings;
+  const { departments } = useDataContext();
 
   const form = useForm<DesignationSchemaType>({
     mode: "onChange",
@@ -62,30 +60,16 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
   });
 
   const onSubmit = async (data: DesignationSchemaType) => {
-    const docRef = doc(settingsCollectionRef, "app-settings");
-    const document = await getDoc(docRef);
-
-    if (!document.exists()) {
-      await setDoc(docRef, {});
-    }
-
     try {
       setLoading(true);
-      const existing_data = document.data() || {};
-      const designations = existing_data?.designations || [];
 
       const new_data = {
-        id: uuid(),
         createdAt: new Date().getTime(),
         modifiedAt: new Date().getTime(),
         ...data,
       };
 
-      updateDoc(docRef, {
-        ...existing_data,
-        designations: [...designations, new_data],
-      });
-
+      await addDoc(designationRef, new_data);
       onClose();
     } catch (err: any) {
       toast({

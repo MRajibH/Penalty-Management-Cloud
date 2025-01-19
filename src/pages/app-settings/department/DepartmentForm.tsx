@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -16,8 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { settingsCollectionRef } from "@/db/firebase.db";
+import { addDoc } from "firebase/firestore";
+import { departmentRef } from "@/db/firebase.db";
 
 const DepartmentSchema = z.object({
   department_name: z.string(),
@@ -40,30 +39,16 @@ const DepartmentForm = ({ onClose }: DepartmentFormProps) => {
   });
 
   const onSubmit = async (data: DepartmentSchemaType) => {
-    const docRef = doc(settingsCollectionRef, "app-settings");
-    const document = await getDoc(docRef);
-
-    if (!document.exists()) {
-      await setDoc(docRef, {});
-    }
-
     try {
       setLoading(true);
-      const existing_data = document.data() || {};
-      const departments = existing_data?.departments || [];
 
       const new_data = {
-        id: uuid(),
         createdAt: new Date().getTime(),
         modifiedAt: new Date().getTime(),
         ...data,
       };
 
-      updateDoc(docRef, {
-        ...existing_data,
-        departments: [...departments, new_data],
-      });
-
+      await addDoc(departmentRef, new_data);
       onClose();
     } catch (err: any) {
       toast({

@@ -1,5 +1,5 @@
-import { settingsCollectionRef } from "@/db/firebase.db";
-import { doc, onSnapshot } from "firebase/firestore";
+import { departmentRef, designationRef } from "@/db/firebase.db";
+import { onSnapshot } from "firebase/firestore";
 import {
   createContext,
   ReactNode,
@@ -8,47 +8,63 @@ import {
   useState,
 } from "react";
 
+export type departmentType = {
+  id: string;
+  createdAt: number;
+  modifiedAt: number;
+  department_name: string;
+};
+
+export type designationType = {
+  id: string;
+  createdAt: number;
+  modifiedAt: number;
+  department_name: string;
+  designation_name: string;
+};
+
 interface DataContextType {
-  appSettings: {
-    departments: {
-      id: string;
-      createdAt: number;
-      modifiedAt: number;
-      department_name: string;
-    }[];
-    designations: {
-      id: string;
-      createdAt: number;
-      modifiedAt: number;
-      department_name: string;
-      designation_name: string;
-    }[];
-  };
+  departments: departmentType[];
+  designations: designationType[];
 }
 
 export const DataContext = createContext({} as DataContextType);
 export const useDataContext = () => useContext(DataContext);
 
 export const DataContextProvider = ({ children }: { children: ReactNode }) => {
-  const [appSettings, setAppSettings] = useState({
-    departments: [],
-    designations: [],
-  });
+  const [departments, setDepartments] = useState([]);
+  const [designations, setDesignations] = useState([]);
 
   useEffect(() => {
-    const docRef = doc(settingsCollectionRef, "app-settings");
-    const unscubscribe = onSnapshot(docRef, (snapshot) => {
-      if (snapshot.data()) {
-        setAppSettings((prev) => ({ ...prev, ...snapshot.data() }));
-      }
+    const unscubscribeDepartment = onSnapshot(departmentRef, (snapshot) => {
+      const departments: any = [];
+      snapshot.forEach((doc) => {
+        departments.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      setDepartments(departments);
+    });
+
+    const unscubscribeDesignation = onSnapshot(designationRef, (snapshot) => {
+      const designation: any = [];
+      snapshot.forEach((doc) => {
+        designation.push({
+          ...doc.data(),
+          id: doc.id,
+        });
+      });
+      setDesignations(designation);
     });
 
     return () => {
-      unscubscribe();
+      unscubscribeDepartment();
+      unscubscribeDesignation();
     };
   }, []);
 
-  const value: any = { appSettings };
+  const value: any = { departments, designations };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
