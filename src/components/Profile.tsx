@@ -12,6 +12,8 @@ import { PiCaretUpDownBold } from "react-icons/pi";
 import { Settings2, User } from "lucide-react";
 import { FiLogOut } from "react-icons/fi";
 import { cn } from "@/lib/utils";
+import { useAuthContext } from "@/context/authContext";
+import { Link } from "react-router-dom";
 
 interface ProfileProps {
   iconOnly?: boolean;
@@ -19,6 +21,8 @@ interface ProfileProps {
 }
 
 const Profile = ({ className, iconOnly = false }: ProfileProps) => {
+  const { sign_out } = useAuthContext();
+
   return (
     <div className={cn("", className)}>
       <DropdownMenu>
@@ -52,17 +56,24 @@ const Profile = ({ className, iconOnly = false }: ProfileProps) => {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <User />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings2 />
-              Settings
-            </DropdownMenuItem>
+            <Link to={"/app/profile"}>
+              <DropdownMenuItem>
+                <User />
+                Profile
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/app/settings"}>
+              <DropdownMenuItem>
+                <Settings2 />
+                Settings
+              </DropdownMenuItem>
+            </Link>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600 hover:text-red-600 hover:bg-red-50">
+          <DropdownMenuItem
+            onClick={sign_out}
+            className="text-red-600 hover:text-red-600 hover:bg-red-50"
+          >
             <FiLogOut />
             Log out
           </DropdownMenuItem>
