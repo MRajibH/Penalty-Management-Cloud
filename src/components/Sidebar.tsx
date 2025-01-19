@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
-import { BookOpen, Home, Settings2, Users2 } from "lucide-react";
+import { BookOpen, Home, Settings, Settings2, Users2 } from "lucide-react";
 import logo from "../assets/logo.png";
 interface SidebarProps {
   isCollapsed: boolean;
@@ -111,6 +111,14 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             type: "link",
             title: "Settings",
             url: "/app/settings",
+            label: "",
+            icon: Settings,
+            variant: "ghost",
+          },
+          {
+            type: "link",
+            title: "App Settings",
+            url: "/app/app_settings",
             label: "",
             icon: Settings2,
             variant: "ghost",
