@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
-import { BookOpen, Home, Settings2, Users2 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import { BookOpen, Home, Settings, Settings2, Users2 } from "lucide-react";
+import { useAuthContext } from "@/context/authContext";
 interface SidebarProps {
   isCollapsed: boolean;
 }
@@ -49,6 +49,8 @@ export const Logo = ({ className }: { className?: string }) => (
 );
 
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
+  const { isLoggedIn } = useAuthContext();
+
   return (
     <div className="flex flex-col h-full">
       <div
@@ -57,7 +59,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
           isCollapsed ? "justify-center" : "px-2"
         )}
       >
-        <img src={logo} className="w-8 mx-2" />
+        <img src={"/Penalty-Management-Cloud/logo.png"} className="w-8 mx-2" />
         {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && (
           <h3 className="font-bold text-xl">Penalty Management</h3>
@@ -112,16 +114,29 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             title: "Settings",
             url: "/app/settings",
             label: "",
+            icon: Settings,
+            variant: "ghost",
+          },
+          {
+            type: "link",
+            title: "App Settings",
+            url: "/app/app_settings",
+            label: "",
             icon: Settings2,
             variant: "ghost",
           },
         ]}
       />
-      <Separator />
-      <Profile
-        className={`p-3 mx-${isCollapsed ? "auto" : "0"}`}
-        iconOnly={isCollapsed}
-      />
+
+      {isLoggedIn && (
+        <>
+          <Separator />
+          <Profile
+            className={`p-3 mx-${isCollapsed ? "auto" : "0"}`}
+            iconOnly={isCollapsed}
+          />
+        </>
+      )}
     </div>
   );
 };

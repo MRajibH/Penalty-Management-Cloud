@@ -1,5 +1,6 @@
 import { useAuthContext } from "@/context/authContext";
 import RootLayout from "@/layout/RootLayout";
+import AppSettings from "@/pages/app-settings";
 import Dashboard from "@/pages/dashboard";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
@@ -15,6 +16,7 @@ const RootRouter = () => {
         <Route path="user_management" element={<UserManagement />} />
         <Route path="manage_contitution" element={<></>} />
         <Route path="settings" element={<Settings />} />
+        <Route path="app_settings" element={<AppSettings />} />
         {/* </Route> */}
       </Route>
       <Route element={<UnAuthRoutes />}>
@@ -28,10 +30,10 @@ const RootRouter = () => {
   );
 };
 
-const ProtectedRoutes = () => {
-  const { isLoggedIn } = useAuthContext();
-  return isLoggedIn ? <Outlet /> : <Navigate to={"/login"} replace={true} />;
-};
+// const ProtectedRoutes = () => {
+//   const { isLoggedIn } = useAuthContext();
+//   return isLoggedIn ? <Outlet /> : <Navigate to={"/login"} replace={true} />;
+// };
 
 const UnAuthRoutes = () => {
   const { isLoggedIn } = useAuthContext();
