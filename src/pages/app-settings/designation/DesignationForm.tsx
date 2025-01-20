@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { designationRef } from "@/db/firebase.db";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDoc } from "firebase/firestore";
+import { addDoc, doc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -43,9 +43,15 @@ type DesignationSchemaType = z.infer<typeof DesignationSchema>;
 
 interface DesignationFormProps {
   onClose: any;
+  componentFor?: "update" | "create";
+  defaultValue?: DesignationSchemaType & { id: string };
 }
 
-const DesignationForm = ({ onClose }: DesignationFormProps) => {
+const DesignationForm = ({
+  onClose,
+  defaultValue,
+  componentFor = "create",
+}: DesignationFormProps) => {
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
@@ -55,7 +61,7 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
 
   const form = useForm<DesignationSchemaType>({
     mode: "onChange",
-    defaultValues: {},
+    defaultValues: defaultValue || { department_name: "" },
     resolver: zodResolver(DesignationSchema),
   });
 
@@ -69,7 +75,17 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
         ...data,
       };
 
-      await addDoc(designationRef, new_data);
+      // for creating
+      if (componentFor === "create") {
+        await addDoc(designationRef, new_data);
+      }
+
+      // for updating
+      else if (componentFor === "update" && defaultValue?.id) {
+        const { id } = defaultValue;
+        await updateDoc(doc(designationRef, id), new_data);
+      }
+
       onClose();
     } catch (err: any) {
       toast({
@@ -90,7 +106,7 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="py-4 space-y-4">
+        <div className="py-4 space-y-6">
           {fields.map(
             ({ name, label, description, inputType, placeholder }) => {
               switch (inputType) {
@@ -146,7 +162,7 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
-                            <PopoverContent className="w-[400px] p-0">
+                            <PopoverContent className="w-[335px] lg:w-[450px] p-0">
                               <Command>
                                 <CommandInput
                                   placeholder="Search department..."
@@ -188,7 +204,9 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
                             </PopoverContent>
                           </Popover>
                           <FormDescription>
-                            {departments.length === 0 ? description : ""}
+                            {departments.length === 0
+                              ? "NB : If there is no department created, you need to create a department first."
+                              : description}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -200,12 +218,12 @@ const DesignationForm = ({ onClose }: DesignationFormProps) => {
           )}
         </div>
 
-        <DialogFooter className="gap-2">
+        <DialogFooter className="gap-2 py-8">
           <Button type="reset" variant={"outline"} onClick={onClose}>
             Close
           </Button>
           <Button loading={loading} variant={"default"} type="submit">
-            Create
+            {componentFor === "update" ? "Update" : "Create"} Designation
           </Button>
         </DialogFooter>
       </form>
@@ -225,7 +243,8 @@ const fields: fieldType[] = [
   {
     name: "designation_name",
     label: "Designation Name",
-    description: "",
+    description:
+      "Enter the name of the new designation, e.g., 'Software Engineer'.",
     inputType: "text",
     placeholder: "Enter a designation name ...",
   },
@@ -233,7 +252,7 @@ const fields: fieldType[] = [
     name: "department_name",
     label: "Department Name",
     description:
-      "NB : If there is no department created, you need to create a department first.",
+      "Select the department this designation belongs to, e.g., 'DevSecOps'.",
     inputType: "select",
     placeholder: "Enter a department name ...",
   },
