@@ -28,6 +28,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { employeeRef } from "@/db/firebase.db";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export const CreateEmployee = () => {
   const { open, setOpen, onClose } = useBoolean();
@@ -80,11 +81,26 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "avatar",
     header: ({ column }) => (
-      <DataTableColumnHeader align="center" column={column} title="Avater" />
+      <DataTableColumnHeader
+        align="center"
+        title="Avater"
+        column={column}
+        className="w-[100px]"
+      />
     ),
-    cell: ({ row }) => (
-      <div className="w-[80px] text-center">{row.getValue("avatar")}</div>
-    ),
+    cell: ({ row }) => {
+      const name: string = row.getValue("name") || "";
+      const fallbacK_name =
+        name.split(" ")[0].charAt(0) + (name.split(" ")[1]?.charAt(0) || "");
+
+      return (
+        <div className="w-[100px] flex justify-center">
+          <Avatar className="w-9 h-9">
+            <AvatarFallback>{fallbacK_name}</AvatarFallback>
+          </Avatar>
+        </div>
+      );
+    },
     enableSorting: false,
     enableHiding: false,
   },
@@ -166,14 +182,12 @@ interface EditEmployeeProps extends UseBooleanType {
 const EditEmployee = ({ data, ...boolean }: EditEmployeeProps) => {
   const { open, setOpen, onClose } = boolean;
 
-  console.log(data);
-
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="lg:min-w-[500px]">
         <SheetHeader>
-          <SheetTitle>Edit Designation</SheetTitle>
-          <SheetDescription>Update the department with.</SheetDescription>
+          <SheetTitle>Edit Employee</SheetTitle>
+          <SheetDescription>Update the Employee data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
         <EmployeeForm

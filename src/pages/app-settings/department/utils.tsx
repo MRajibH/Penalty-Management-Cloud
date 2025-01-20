@@ -155,7 +155,7 @@ const EditDepartment = ({ data, ...boolean }: EditDepartmentProps) => {
       <SheetContent className="lg:min-w-[500px]">
         <SheetHeader>
           <SheetTitle>Edit Department</SheetTitle>
-          <SheetDescription>Update the department with.</SheetDescription>
+          <SheetDescription>Update the Department data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
         <DepartmentForm

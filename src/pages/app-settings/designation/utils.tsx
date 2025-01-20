@@ -166,7 +166,7 @@ const EditDesignation = ({ data, ...boolean }: EditDesignationProps) => {
       <SheetContent className="lg:min-w-[500px]">
         <SheetHeader>
           <SheetTitle>Edit Designation</SheetTitle>
-          <SheetDescription>Update the department with.</SheetDescription>
+          <SheetDescription>Update the Designation data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
         <DesignationForm

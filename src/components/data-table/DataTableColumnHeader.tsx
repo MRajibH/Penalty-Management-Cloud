@@ -28,7 +28,7 @@ export function DataTableColumnHeader<TData, TValue>({
     return (
       <div
         className={cn(
-          "flex",
+          "w-full flex",
           className,
           align === "center" && "justify-center"
         )}
