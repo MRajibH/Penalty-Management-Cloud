@@ -1,40 +1,54 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { ColumnDef } from "@tanstack/react-table";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import EmployeeForm from "./EmployeeForm";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-// import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
-import useBoolean from "@/hooks/use-boolean";
+import useBoolean, { UseBooleanType } from "@/hooks/use-boolean";
+import { Separator } from "@/components/ui/separator";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
+import { employeesType } from "@/context/dataContext";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { deleteDoc, doc } from "firebase/firestore";
+import { employeeRef } from "@/db/firebase.db";
 
 export const CreateEmployee = () => {
   const { open, setOpen, onClose } = useBoolean();
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button size={"sm"}>
           Add Employee
           <Plus />
         </Button>
-      </DialogTrigger>
-
-      <DialogContent className="sm:max-w-[450px]">
-        <DialogHeader>
-          <DialogTitle>Add Employee</DialogTitle>
-          <DialogDescription>Create a new employee.</DialogDescription>
-        </DialogHeader>
+      </SheetTrigger>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>Add Employee</SheetTitle>
+          <SheetDescription>Create a new employee.</SheetDescription>
+        </SheetHeader>
+        <Separator className="mt-6" />
         <EmployeeForm onClose={onClose} />
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
@@ -49,7 +63,7 @@ export const columns: ColumnDef<any>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className="translate-y-[2px]"
+        className="translate-y-[2px] ml-4"
       />
     ),
     cell: ({ row }) => (
@@ -57,7 +71,7 @@ export const columns: ColumnDef<any>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="translate-y-[2px]"
+        className="translate-y-[2px] ml-4"
       />
     ),
     enableSorting: false,
@@ -66,9 +80,11 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "avatar",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Avater" />
+      <DataTableColumnHeader align="center" column={column} title="Avater" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("avatar")}</div>,
+    cell: ({ row }) => (
+      <div className="w-[80px] text-center">{row.getValue("avatar")}</div>
+    ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -86,17 +102,21 @@ export const columns: ColumnDef<any>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
-    cell: ({ row }) => <div className="w-[300px]">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "designation_name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Designation" />
+      <DataTableColumnHeader
+        align="center"
+        column={column}
+        title="Designation"
+      />
     ),
     cell: ({ row }) => (
-      <div className="w-[200px]">{row.getValue("designation_name")}</div>
+      <div className="text-center">{row.getValue("designation_name")}</div>
     ),
     enableSorting: true,
     enableHiding: true,
@@ -104,16 +124,124 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "department_name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Department" />
+      <DataTableColumnHeader
+        align="center"
+        column={column}
+        title="Department"
+      />
     ),
     cell: ({ row }) => (
-      <div className="w-[120px]">{row.getValue("department_name")}</div>
+      <div className="text-center">{row.getValue("department_name")}</div>
     ),
     enableSorting: true,
     enableHiding: true,
   },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  {
+    id: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader align="center" column={column} title="Action" />
+    ),
+    cell: ({ row }) => {
+      const EditBoolean = useBoolean();
+      const DeleteBoolean = useBoolean();
+
+      return (
+        <div className="flex justify-center">
+          <DataTableRowActions
+            onClickEdit={EditBoolean.onOpen}
+            onClickDelete={DeleteBoolean.onOpen}
+          />
+          <EditEmployee data={row.original} {...EditBoolean} />
+          <DeleteEmployee data={row.original} {...DeleteBoolean} />
+        </div>
+      );
+    },
+  },
 ];
+
+interface EditEmployeeProps extends UseBooleanType {
+  data: employeesType;
+}
+
+const EditEmployee = ({ data, ...boolean }: EditEmployeeProps) => {
+  const { open, setOpen, onClose } = boolean;
+
+  console.log(data);
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>Edit Designation</SheetTitle>
+          <SheetDescription>Update the department with.</SheetDescription>
+        </SheetHeader>
+        <Separator className="mt-6" />
+        <EmployeeForm
+          defaultValue={data}
+          componentFor={"update"}
+          onClose={onClose}
+        />
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+interface DeleteEmployeeProps extends UseBooleanType {
+  data: employeesType;
+}
+
+const DeleteEmployee = ({ data, ...boolean }: DeleteEmployeeProps) => {
+  const { toast } = useToast();
+  const { open, setOpen, onClose } = boolean;
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    const { id } = data;
+    try {
+      setLoading(true);
+      await deleteDoc(doc(employeeRef, id));
+      onClose();
+    } catch (err: any) {
+      toast({
+        title: "Something went wrong",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(err?.message || err, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[425px] pb-4">
+        <DialogHeader>
+          <DialogTitle>Delete Confirmation</DialogTitle>
+          <DialogDescription className="py-2">
+            Are you sure you want to delete this Department?
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter>
+          <Button variant={"ghost"} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant={"ghost"}
+            loading={loading}
+            onClick={handleClick}
+            className="text-red-600 hover:text-red-600 hover:bg-red-50"
+          >
+            Yes, Delete
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};

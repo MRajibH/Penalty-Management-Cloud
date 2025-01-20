@@ -14,6 +14,7 @@ export type employeesType = {
   email: string;
   createdAt: number;
   modifiedAt: number;
+  designation_id: string;
   department_name: string;
   designation_name: string;
 };

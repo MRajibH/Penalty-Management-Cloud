@@ -254,7 +254,7 @@ const fields: fieldType[] = [
     description:
       "Select the department this designation belongs to, e.g., 'DevSecOps'.",
     inputType: "select",
-    placeholder: "Enter a department name ...",
+    placeholder: "Select a department name ...",
   },
 ];
 
