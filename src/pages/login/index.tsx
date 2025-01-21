@@ -33,7 +33,7 @@ const LoginView = () => {
       await SignIn({ email, pass });
     } catch (err: any) {
       toast({
-        title: err,
+        title: err.message,
         variant: "destructive",
       });
     } finally {
