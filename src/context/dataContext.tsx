@@ -38,6 +38,10 @@ interface DataContextType {
   employees: employeesType[];
   departments: departmentType[];
   designations: designationType[];
+
+  employeeMapped: Record<string, employeesType>;
+  departmentMapped: Record<string, departmentType>;
+  designationMapped: Record<string, designationType>;
 }
 
 export const DataContext = createContext({} as DataContextType);
