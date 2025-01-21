@@ -19,7 +19,7 @@ export const getSnapshotData = (
 export const getQueryRef = (
   ref: CollectionReference<DocumentData, DocumentData>
 ) => {
-  return query(ref, orderBy("createdAt", "asc"));
+  return query(ref, orderBy("createdAt", "desc"));
 };
 
 export const mappedFunc = (previous: any, current: any) => {

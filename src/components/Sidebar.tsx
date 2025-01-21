@@ -49,7 +49,7 @@ export const Logo = ({ className }: { className?: string }) => (
 );
 
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
-  const { isLoggedIn } = useAuthContext();
+  const { currentUser } = useAuthContext();
 
   return (
     <div className="flex flex-col h-full">
@@ -128,7 +128,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
         ]}
       />
 
-      {isLoggedIn && (
+      {currentUser && (
         <>
           <Separator />
           <Profile

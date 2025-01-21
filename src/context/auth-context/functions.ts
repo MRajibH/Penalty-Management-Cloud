@@ -1,31 +1,26 @@
-import { Dispatch, SetStateAction } from "react";
 import { SignInAugument } from "./types";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 interface SignInProps {
-  setState: Dispatch<SetStateAction<boolean>>;
   formData: SignInAugument;
 }
 
-interface SignOutProps {
-  setState: Dispatch<SetStateAction<boolean>>;
-}
+export const SubmitSignIn = async ({ formData }: SignInProps) => {
+  const auth = getAuth();
+  const { email, pass } = formData;
 
-export const SubmitSignIn = ({ setState, formData }: SignInProps) => {
-  const { user, pass } = formData;
-
-  return new Promise((resolve, reject) => {
-    if (user === "admin" && pass === "brotecs@!230") {
-      setState(true);
-      resolve(true);
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (error: any) {
+    if (error.code === "auth/invalid-credential") {
+      throw new Error("Invalid Email or Password");
     } else {
-      reject("Invalid username or password");
+      throw new Error("Something went wrong, [ " + error.code + " ]");
     }
-  });
+  }
 };
 
-export const SubmitSignOut = ({ setState }: SignOutProps) => {
-  return new Promise((resolve, _) => {
-    setState(false);
-    resolve(true);
-  });
+export const SubmitSignOut = async () => {
+  const auth = getAuth();
+  return await signOut(auth);
 };

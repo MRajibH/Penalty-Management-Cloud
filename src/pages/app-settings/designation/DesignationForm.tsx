@@ -61,7 +61,7 @@ const DesignationForm = ({
 
   const form = useForm<DesignationSchemaType>({
     mode: "onChange",
-    defaultValues: defaultValue || { department_id: "" },
+    defaultValues: defaultValue || {},
     resolver: zodResolver(DesignationSchema),
   });
 
@@ -83,7 +83,8 @@ const DesignationForm = ({
       // for updating
       else if (componentFor === "update" && defaultValue?.id) {
         const { id } = defaultValue;
-        await updateDoc(doc(designationRef, id), new_data);
+        const { createdAt, ...updated_data } = new_data;
+        await updateDoc(doc(designationRef, id), updated_data);
       }
 
       onClose();

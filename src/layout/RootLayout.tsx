@@ -22,7 +22,7 @@ const defaultLayout = [20, 32, 48];
 const RootLayout = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { isLoggedIn } = useAuthContext();
+  const { currentUser } = useAuthContext();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const RootLayout = () => {
               <div className="flex items-center gap-2">
                 <SearchBox />
                 <Separator orientation="vertical" className="h-[32px]" />
-                {isLoggedIn ? (
+                {currentUser ? (
                   <Profile iconOnly />
                 ) : (
                   <Link

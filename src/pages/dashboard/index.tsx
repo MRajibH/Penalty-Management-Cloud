@@ -27,7 +27,7 @@ const initialFilters: SearchFilters = {
 };
 
 const Dashboard = () => {
-  const { isLoggedIn } = useAuthContext();
+  const { currentUser } = useAuthContext();
 
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
   const [penalties, setPenalties] = useState<Penalty[]>([]);
@@ -98,7 +98,7 @@ const Dashboard = () => {
           Penalty Management System
         </h1>
 
-        {isLoggedIn && <AddPenaltyForm />}
+        {currentUser && <AddPenaltyForm />}
       </div>
 
       <Stats stats={stats} />

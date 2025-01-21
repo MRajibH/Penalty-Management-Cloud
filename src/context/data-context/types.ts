@@ -6,11 +6,10 @@ export type employeesType = {
   id: string;
   name: string;
   email: string;
+  phone: string;
   createdAt: number;
   modifiedAt: number;
   designation_id: string;
-  department_name: string;
-  designation_name: string;
 };
 
 export type departmentType = {

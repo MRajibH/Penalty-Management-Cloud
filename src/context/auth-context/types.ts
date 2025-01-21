@@ -2,10 +2,20 @@
 // Types of Auth Context
 // ===============================
 
-export type SignInAugument = { user: string; pass: string };
+export type SignInAugument = { email: string; pass: string };
+
+export type CurrentUserType = {
+  uid: string;
+  displayName: string;
+  email: string;
+  emailVerified: boolean;
+  photoURL: string;
+  providerId: string;
+};
 
 export interface AuthContextType {
-  isLoggedIn: boolean;
-  SignOut: () => Promise<unknown>;
-  SignIn: ({}: SignInAugument) => Promise<unknown>;
+  loading: boolean;
+  currentUser: CurrentUserType | undefined;
+  SignOut: () => Promise<void>;
+  SignIn: ({}: SignInAugument) => Promise<void>;
 }

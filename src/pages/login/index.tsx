@@ -21,19 +21,23 @@ const LoginView = () => {
   const { toast } = useToast();
   const { SignIn } = useAuthContext();
 
-  const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
-      await SignIn({ user, pass });
+      setLoading(true);
+      await SignIn({ email, pass });
     } catch (err: any) {
       toast({
         title: err,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,13 +64,15 @@ const LoginView = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Input
-                  name="user"
-                  type="text"
-                  value={user}
-                  placeholder="Enter username"
-                  onChange={(e) => setUser(e.target.value)}
+                  required
+                  name="email"
+                  type="email"
+                  value={email}
+                  placeholder="Enter email"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <Input
+                  required
                   value={pass}
                   name="password"
                   type="password"
@@ -74,7 +80,7 @@ const LoginView = () => {
                   onChange={(e) => setPass(e.target.value)}
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" loading={loading}>
                 Continue
               </Button>
             </form>
