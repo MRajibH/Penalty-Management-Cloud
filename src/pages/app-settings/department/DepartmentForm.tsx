@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { addDoc } from "firebase/firestore";
+import { addDoc, doc, updateDoc } from "firebase/firestore";
 import { departmentRef } from "@/db/firebase.db";
 
 const DepartmentSchema = z.object({
@@ -26,15 +26,21 @@ type DepartmentSchemaType = z.infer<typeof DepartmentSchema>;
 
 interface DepartmentFormProps {
   onClose: any;
+  componentFor?: "update" | "create";
+  defaultValue?: DepartmentSchemaType & { id: string };
 }
 
-const DepartmentForm = ({ onClose }: DepartmentFormProps) => {
+const DepartmentForm = ({
+  onClose,
+  defaultValue,
+  componentFor = "create",
+}: DepartmentFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<DepartmentSchemaType>({
     mode: "onChange",
-    defaultValues: {},
+    defaultValues: defaultValue || { department_name: "" },
     resolver: zodResolver(DepartmentSchema),
   });
 
@@ -48,7 +54,16 @@ const DepartmentForm = ({ onClose }: DepartmentFormProps) => {
         ...data,
       };
 
-      await addDoc(departmentRef, new_data);
+      // for creating
+      if (componentFor === "create") {
+        await addDoc(departmentRef, new_data);
+      }
+
+      // for updating
+      else if (componentFor === "update" && defaultValue?.id) {
+        const { id } = defaultValue;
+        await updateDoc(doc(departmentRef, id), new_data);
+      }
       onClose();
     } catch (err: any) {
       toast({
@@ -69,7 +84,7 @@ const DepartmentForm = ({ onClose }: DepartmentFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="py-4">
+        <div className="py-4 space-y-6">
           {fields.map(({ name, label, description, placeholder }) => {
             return (
               <FormField
@@ -90,12 +105,12 @@ const DepartmentForm = ({ onClose }: DepartmentFormProps) => {
           })}
         </div>
 
-        <DialogFooter className="gap-2">
-          <Button type="reset" variant={"outline"} onClick={onClose}>
+        <DialogFooter className="gap-2 py-8">
+          <Button type="reset" variant={"outline"}>
             Close
           </Button>
           <Button loading={loading} variant={"default"} type="submit">
-            Create
+            {componentFor === "update" ? "Update" : "Create"} Department
           </Button>
         </DialogFooter>
       </form>
@@ -114,7 +129,7 @@ const fields: fieldType[] = [
   {
     name: "department_name",
     label: "Department Name",
-    description: "",
+    description: "Enter the name of the new department, e.g., 'DevSecOps'.",
     placeholder: "Enter a department name ...",
   },
 ];
