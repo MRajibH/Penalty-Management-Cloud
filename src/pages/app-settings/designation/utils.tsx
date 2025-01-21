@@ -15,7 +15,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { designationType } from "@/context/dataContext";
 import {
   Dialog,
   DialogContent,
@@ -28,6 +27,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDoc, doc } from "firebase/firestore";
 import { designationRef } from "@/db/firebase.db";
+import { designationType } from "@/context/data-context/types";
 
 export const CreateDesignation = () => {
   const { open, setOpen, onClose } = useBoolean(false);

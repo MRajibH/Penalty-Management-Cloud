@@ -1,7 +1,6 @@
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns, CreateDepartment } from "./utils";
-import { useDataContext } from "@/context/dataContext";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext, useDataContext } from "@/context";
 
 const Department = () => {
   const { isLoggedIn } = useAuthContext();

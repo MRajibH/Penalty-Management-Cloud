@@ -23,7 +23,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { designationType, useDataContext } from "@/context/dataContext";
+import { useDataContext } from "@/context";
+import { designationType } from "@/context/data-context/types";
 import { designationRef, employeeRef } from "@/db/firebase.db";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";

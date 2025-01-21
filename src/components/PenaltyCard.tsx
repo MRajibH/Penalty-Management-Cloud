@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context";
 import { cn } from "@/lib/utils";
 
 interface PenaltyCardProps {

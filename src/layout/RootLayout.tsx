@@ -10,7 +10,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context";
 import { cn } from "@/lib/utils";
 import { LogIn } from "lucide-react";
 import { useEffect, useState } from "react";

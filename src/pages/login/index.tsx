@@ -15,11 +15,11 @@ import { FaGithub } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context";
 
 const LoginView = () => {
   const { toast } = useToast();
-  const { sign_in } = useAuthContext();
+  const { SignIn } = useAuthContext();
 
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
@@ -28,7 +28,7 @@ const LoginView = () => {
     e.preventDefault();
 
     try {
-      await sign_in({ user, pass });
+      await SignIn({ user, pass });
     } catch (err: any) {
       toast({
         title: err,

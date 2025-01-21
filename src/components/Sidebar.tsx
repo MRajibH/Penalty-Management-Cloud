@@ -3,7 +3,7 @@ import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
 import { BookOpen, Home, Settings, Settings2, Users2 } from "lucide-react";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context";
 interface SidebarProps {
   isCollapsed: boolean;
 }

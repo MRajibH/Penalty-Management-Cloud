@@ -1,4 +1,4 @@
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context";
 import RootLayout from "@/layout/RootLayout";
 import AppSettings from "@/pages/app-settings";
 import Dashboard from "@/pages/dashboard";

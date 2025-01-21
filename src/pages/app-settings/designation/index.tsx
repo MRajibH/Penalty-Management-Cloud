@@ -1,7 +1,6 @@
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns, CreateDesignation } from "./utils";
-import { useDataContext } from "@/context/dataContext";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext, useDataContext } from "@/context";
 
 const Designation = () => {
   const { isLoggedIn } = useAuthContext();

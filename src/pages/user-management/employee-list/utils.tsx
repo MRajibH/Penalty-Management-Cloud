@@ -23,12 +23,12 @@ import useBoolean, { UseBooleanType } from "@/hooks/use-boolean";
 import { Separator } from "@/components/ui/separator";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
-import { employeesType } from "@/context/dataContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { employeeRef } from "@/db/firebase.db";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { employeesType } from "@/context/data-context/types";
 
 export const CreateEmployee = () => {
   const { open, setOpen, onClose } = useBoolean();
