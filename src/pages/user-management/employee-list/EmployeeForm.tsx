@@ -8,7 +8,7 @@ import ZSelect from "@/components/z-forms/ZSelect";
 import { useDataContext } from "@/context";
 import { employeeRef } from "@/db/firebase.db";
 import useForm from "@/hooks/use-form";
-import { EmployeeSchemaType, getEmployeeSchema } from "@/Schema/EmployeeSchema";
+import { EmployeeSchemaType, getEmployeeSchema } from "@/schema/EmployeeSchema";
 import { useState } from "react";
 
 interface EmployeeFormProps {

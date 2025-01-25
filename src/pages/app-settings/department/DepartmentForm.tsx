@@ -3,7 +3,7 @@ import { DialogFooter } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { useState } from "react";
 import { departmentRef } from "@/db/firebase.db";
-import { getDepartmentSchema, DepartmentSchemaType } from "@/Schema/DepartmentSchema";
+import { getDepartmentSchema, DepartmentSchemaType } from "@/schema/DepartmentSchema";
 import useForm from "@/hooks/use-form";
 import { CreateDocument, UpdateDocument } from "@/common/helper";
 import ZInput from "@/components/z-forms/ZInput";

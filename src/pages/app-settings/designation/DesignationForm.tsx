@@ -8,7 +8,7 @@ import ZInput from "@/components/z-forms/ZInput";
 import ZSelect from "@/components/z-forms/ZSelect";
 import { ZSelectListType } from "@/components/z-forms/types";
 import { CreateDocument, UpdateDocument } from "@/common/helper";
-import { getDesignationSchema, DesignationSchemaType } from "@/Schema/DesignationSchema";
+import { getDesignationSchema, DesignationSchemaType } from "@/schema/DesignationSchema";
 import useForm from "@/hooks/use-form";
 
 interface DesignationFormProps {
