@@ -1,15 +1,15 @@
 import { Control } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
 import { DefaultZFormProps } from "./types";
 import { ComponentProps } from "react";
+import { Textarea } from "../ui/textarea";
 
-interface ZInput extends DefaultZFormProps {
+interface ZTextarea extends DefaultZFormProps {
   control: Control<any>;
-  inputProps?: ComponentProps<"input">;
+  inputProps?: ComponentProps<"textarea">;
 }
 
-const ZInput = ({ name, control, label, placeholder, description, inputProps }: ZInput) => {
+const ZTextarea = ({ name, control, label, placeholder, description, inputProps }: ZTextarea) => {
   return (
     <FormField
       control={control}
@@ -18,7 +18,7 @@ const ZInput = ({ name, control, label, placeholder, description, inputProps }: 
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...inputProps} {...field} />
+            <Textarea placeholder={placeholder} {...inputProps} {...field} />
           </FormControl>
           <FormDescription>{description}</FormDescription>
           <FormMessage />
@@ -28,4 +28,4 @@ const ZInput = ({ name, control, label, placeholder, description, inputProps }: 
   );
 };
 
-export default ZInput;
+export default ZTextarea;
