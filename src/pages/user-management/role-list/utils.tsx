@@ -12,7 +12,7 @@ import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import RoleForm from "./RoleForm";
 import { ColumnDef } from "@tanstack/react-table";
-import { roleType } from "@/context/data-context/types";
+import { RolePermissions, roleType } from "@/context/data-context/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
@@ -29,6 +29,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { RoleSchemaType } from "@/schema/RoleSchema";
+import { useDataContext } from "@/context";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 export const CreateRole = () => {
   const { open, setOpen, onClose } = useBoolean();
@@ -53,7 +61,7 @@ export const CreateRole = () => {
   );
 };
 
-export const columns: ColumnDef<roleType>[] = [
+export const columns: ColumnDef<roleType & { id: string }>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -83,13 +91,67 @@ export const columns: ColumnDef<roleType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Role Name" />
     ),
+
+    enableSorting: true,
+    enableHiding: true,
   },
   {
     accessorKey: "roles",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Users" />
     ),
+    cell: ({ row }) => {
+      const { users } = useDataContext();
+      const role_id: string = row.original.id;
+      const usersData = users.filter((user) => user.role_id === role_id);
+
+      return (
+        <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+          {usersData.map((user) => (
+            <Tooltip key={user.id}>
+              <TooltipTrigger asChild>
+                <Avatar key={user.id} className="w-8 h-8 ring-2 ring-white">
+                  <AvatarImage src={user.avatar} />
+                  <AvatarFallback>
+                    {user.avatar.split("/").pop()?.split(".")[0]}
+                  </AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className="flex items-center font-medium"
+              >
+                {user.name}
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
+      );
+    },
+    enableSorting: false,
+    enableHiding: false,
   },
+  // {
+  //   accessorKey: "roles",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Users" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const roles: string = row.getValue("roles");
+  //     const rolesArray = Object.keys(roles)
+  //       .map((role) => Object.keys(roles[role as any]))
+  //       .flat()
+  //       .join(", ");
+
+  //     return (
+  //       <div className="flex flex-wrap gap-2 w-[350px] text-xs font-medium">
+  //         {rolesArray}
+  //       </div>
+  //     );
+  //   },
+  //   enableSorting: false,
+  //   enableHiding: true,
+  // },
   {
     id: "actions",
     header: ({ column }) => (

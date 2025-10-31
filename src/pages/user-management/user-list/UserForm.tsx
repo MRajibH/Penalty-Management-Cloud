@@ -1,14 +1,19 @@
 import { CreateDocument, UpdateDocument } from "@/common/helper";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 import { ZSelectListType } from "@/components/z-forms/types";
+import ZBase from "@/components/z-forms/ZBase";
 import ZInput from "@/components/z-forms/ZInput";
 import ZSelect from "@/components/z-forms/ZSelect";
 import { useDataContext } from "@/context";
 import { userRef } from "@/db/firebase.db";
 import useForm from "@/hooks/use-form";
+import { cn } from "@/lib/utils";
 import { UserSchemaType, getUserSchema } from "@/schema/UserSchema";
+import { Check } from "lucide-react";
 
 interface UserFormProps {
   onClose: any;
@@ -24,7 +29,7 @@ const UserForm = ({
   // -------------------------------------
   // Hooks
   // -------------------------------------
-  const { designations } = useDataContext();
+  const { roles } = useDataContext();
   const form = useForm<UserSchemaType>(getUserSchema(defaultValue));
   const loading = form.formState.isSubmitting;
 
@@ -49,17 +54,25 @@ const UserForm = ({
   // -------------------------------------
   // Variables
   // -------------------------------------
-  const options: ZSelectListType[] = designations.map(
-    ({ id, designation_name }) => ({
-      label: designation_name,
-      value: id,
-    })
-  );
+  const selectedAvatar = form.watch("avatar");
+  const options: ZSelectListType[] = roles.map(({ id, role_name }) => ({
+    label: role_name,
+    value: id,
+  }));
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="py-4 space-y-6">
+          <div className="flex justify-center pt-4">
+            <Avatar className={cn("w-24 h-24 ")}>
+              <AvatarImage src={selectedAvatar} />
+              <AvatarFallback>
+                {selectedAvatar.split("/").pop()?.split(".")[0]}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+
           {fields.map(({ inputType, ...props }) => {
             switch (inputType) {
               // ***
@@ -73,21 +86,51 @@ const UserForm = ({
                 return (
                   <ZSelect
                     form={form}
-                    formKey="designation_id"
+                    formKey="role_id"
                     options={options}
                     {...props}
                   />
                 );
-
-              // ***
-              // File fields
-              case "file":
-                return <></>;
             }
           })}
         </div>
 
-        <DialogFooter className="gap-2 py-8">
+        <Separator />
+
+        <ZBase control={form.control} {...user_avatar_fields}>
+          <div className="grid grid-cols-5 gap-6 py-4">
+            {Array.from({ length: 10 }).map((_, index) => {
+              const src = `/avatar/user-${index + 1}.jpg`;
+              const isSelected = selectedAvatar === src;
+
+              return (
+                <div
+                  key={index}
+                  className="col-span-1 flex justify-center relative "
+                >
+                  <Avatar
+                    className={cn(
+                      "w-12 h-12 cursor-pointer transition-all duration-200",
+                      isSelected && "brightness-50 scale-90 ",
+                      !isSelected && "hover:brightness-75"
+                    )}
+                    onClick={() => form.setValue("avatar", src)}
+                  >
+                    <AvatarImage src={src} />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  {isSelected && (
+                    <Check className="w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </ZBase>
+
+        <Separator />
+
+        <DialogFooter className="gap-2 py-4">
           <Button type="reset" variant={"outline"} onClick={onClose}>
             Close
           </Button>
@@ -105,7 +148,7 @@ type fieldType = {
   description: string;
   placeholder: string;
   inputType: "text" | "select" | "file";
-  name: "name" | "email" | "phone" | "designation_id";
+  name: "name" | "email" | "role_id" | "avatar";
 };
 
 const fields: fieldType[] = [
@@ -125,20 +168,20 @@ const fields: fieldType[] = [
       "Enter the employee's official email address, e.g., 'john.doe@example.com'.",
   },
   {
-    name: "phone",
-    label: "Phone",
-    inputType: "text",
-    placeholder: "Phone number",
-    description: "Enter the employee's phone number, e.g., '01756160530'.",
-  },
-  {
-    name: "designation_id",
-    label: "Designation",
-    placeholder: "Select a Designation",
-    description:
-      "Select the designation this employee belongs to, e.g., 'Software Engineer'.",
+    name: "role_id",
+    label: "Role",
+    placeholder: "Select a Role",
+    description: "Select the role this user belongs to, e.g., 'Admin'.",
     inputType: "select",
   },
 ];
+
+const user_avatar_fields: fieldType = {
+  name: "avatar",
+  label: " Select Avatar",
+  placeholder: "Avatar",
+  description: "",
+  inputType: "file",
+};
 
 export default UserForm;

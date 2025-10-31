@@ -1,8 +1,22 @@
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "../ui/button";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
 import { cn } from "@/lib/utils";
 import { DefaultZFormProps, ZSelectListType } from "./types";
 import { UseFormReturn } from "react-hook-form";
@@ -31,18 +45,27 @@ const ZSelect = ({ form, formKey, options, ...formData }: ZSelect) => {
                 <Button
                   variant="outline"
                   role="combobox"
-                  className={cn("w-full justify-between", !field.value && "text-muted-foreground")}
+                  className={cn(
+                    "w-full justify-between",
+                    !field.value && "text-muted-foreground"
+                  )}
                 >
-                  {field.value ? options.find((option) => option.value === field.value)?.label : placeholder}
+                  {field.value
+                    ? options.find((option) => option.value === field.value)
+                        ?.label
+                    : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="w-[335px] lg:w-[450px] p-0">
               <Command>
-                <CommandInput placeholder="Search department..." className="h-9" />
+                <CommandInput
+                  placeholder={`Search ${label}...`}
+                  className="h-9"
+                />
                 <CommandList>
-                  <CommandEmpty>No department found.</CommandEmpty>
+                  <CommandEmpty>No {label} found.</CommandEmpty>
                   <CommandGroup>
                     {options.map(({ label, value }) => (
                       <CommandItem
@@ -54,7 +77,12 @@ const ZSelect = ({ form, formKey, options, ...formData }: ZSelect) => {
                         }}
                       >
                         {label}
-                        <Check className={cn("ml-auto", value === field.value ? "opacity-100" : "opacity-0")} />
+                        <Check
+                          className={cn(
+                            "ml-auto",
+                            value === field.value ? "opacity-100" : "opacity-0"
+                          )}
+                        />
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -64,7 +92,7 @@ const ZSelect = ({ form, formKey, options, ...formData }: ZSelect) => {
           </Popover>
           <FormDescription>
             {options.length === 0
-              ? "NB : If there is no department created, you need to create a department first."
+              ? `NB : If there is no ${label} created, you need to create a ${label} first.`
               : description}
           </FormDescription>
           <FormMessage />

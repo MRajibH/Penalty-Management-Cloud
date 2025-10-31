@@ -16,20 +16,12 @@ interface ZBase extends DefaultZFormProps {
   children: React.ReactNode;
 }
 
-const ZBase = ({
-  name,
-  control,
-  label,
-  placeholder,
-  description,
-  inputProps,
-  children,
-}: ZBase) => {
+const ZBase = ({ name, control, label, description, children }: ZBase) => {
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={() => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>{children}</FormControl>

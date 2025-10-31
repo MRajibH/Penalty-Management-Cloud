@@ -22,6 +22,7 @@ export type userType = {
   id: string;
   name: string;
   email: string;
+  avatar: string;
   role_id: string;
   createdAt: number;
   modifiedAt: number;

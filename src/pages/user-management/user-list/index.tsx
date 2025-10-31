@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/data-table/DataTable";
-import { CreateUser } from "./utils";
+import { columns, CreateUser } from "./utils";
 import { useAuthContext, useDataContext } from "@/context";
 
 const UserList = () => {
@@ -8,7 +8,7 @@ const UserList = () => {
 
   let elements = [<CreateUser />];
 
-  return <DataTable data={[]} columns={[]} elements={elements} />;
+  return <DataTable data={users} columns={columns} elements={elements} />;
 };
 
 export default UserList;

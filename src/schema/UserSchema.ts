@@ -6,17 +6,21 @@ const schema = z.object({
     .string()
     .min(4, { message: "Name must be greater then 3 characters." })
     .max(30, { message: "Name can not be longer than 30 characters." }),
-  email: z.string().email("Must be a valid email address."),
-  phone: z.string(),
-  designation_id: z.string(),
+  email: z
+    .string()
+    .trim()
+    .email("Must be a valid email address.")
+    .toLowerCase(),
+  role_id: z.string().min(1, { message: "Role is required." }),
+  avatar: z.string().min(1, { message: "Avatar is required." }),
 });
 
 // Default values for the form fields
 const defaultValue = {
   name: "",
   email: "",
-  phone: "",
-  designation_id: "",
+  role_id: "",
+  avatar: "/avatar/user-1.jpg",
 };
 
 export type UserSchemaType = z.infer<typeof schema>;
