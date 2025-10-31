@@ -28,6 +28,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 export const penaltyRef = doc(db, "penalty-management", "HNBX3RWogiKgHeGi12uq");
 
+export const userRef = collection(db, "users");
+export const roleRef = collection(db, "roles");
 export const employeeRef = collection(db, "employee");
 export const departmentRef = collection(db, "departments");
 export const designationRef = collection(db, "designation");

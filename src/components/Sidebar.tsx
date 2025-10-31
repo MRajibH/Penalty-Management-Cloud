@@ -2,7 +2,16 @@ import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
-import { BookOpen, Home, Settings, Settings2, Users2 } from "lucide-react";
+import {
+  AlertCircle,
+  BookOpen,
+  FileText,
+  Home,
+  Settings,
+  Settings2,
+  ShieldAlert,
+  Users2,
+} from "lucide-react";
 import { useAuthContext } from "@/context";
 interface SidebarProps {
   isCollapsed: boolean;
@@ -86,6 +95,14 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             variant: "default",
           },
           {
+            type: "link",
+            title: "Penalties",
+            url: "/app/penalties",
+            label: "",
+            icon: ShieldAlert,
+            variant: "ghost",
+          },
+          {
             type: "label",
             title: "Management",
           },
@@ -93,6 +110,14 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             type: "link",
             title: "User Management",
             url: "/app/user_management",
+            label: "",
+            icon: Users2,
+            variant: "ghost",
+          },
+          {
+            type: "link",
+            title: "Employee Management",
+            url: "/app/employee_management",
             label: "",
             icon: Users2,
             variant: "ghost",
@@ -111,10 +136,10 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
           },
           {
             type: "link",
-            title: "Settings",
-            url: "/app/settings",
+            title: "App Logs",
+            url: "/app/app_logs",
             label: "",
-            icon: Settings,
+            icon: FileText,
             variant: "ghost",
           },
           {

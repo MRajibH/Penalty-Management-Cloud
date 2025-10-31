@@ -2,6 +2,7 @@ import { useAuthContext } from "@/context";
 import RootLayout from "@/layout/RootLayout";
 import AppSettings from "@/pages/app-settings";
 import Dashboard from "@/pages/dashboard";
+import EmployeeManagement from "@/pages/employee-management";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
 import UserManagement from "@/pages/user-management";
@@ -14,6 +15,7 @@ const RootRouter = () => {
         <Route index path="dashboard" element={<Dashboard />} />
         {/* <Route element={<ProtectedRoutes />}> */}
         <Route path="user_management" element={<UserManagement />} />
+        <Route path="employee_management" element={<EmployeeManagement />} />
         <Route path="manage_contitution" element={<></>} />
         <Route path="settings" element={<Settings />} />
         <Route path="app_settings" element={<AppSettings />} />
