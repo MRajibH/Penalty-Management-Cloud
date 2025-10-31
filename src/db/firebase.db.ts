@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { collection, doc, getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -28,6 +29,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 export const penaltyRef = doc(db, "penalty-management", "HNBX3RWogiKgHeGi12uq");
 
+export const authRef = getAuth(app);
 export const userRef = collection(db, "users");
 export const roleRef = collection(db, "roles");
 export const employeeRef = collection(db, "employee");

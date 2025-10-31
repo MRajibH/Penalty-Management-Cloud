@@ -11,6 +11,9 @@ const schema = z.object({
     .trim()
     .email("Must be a valid email address.")
     .toLowerCase(),
+  password: z
+    .string()
+    .min(6, { message: "Password must be greater then 5 characters." }),
   role_id: z.string().min(1, { message: "Role is required." }),
   avatar: z.string().min(1, { message: "Avatar is required." }),
 });
@@ -19,6 +22,7 @@ const schema = z.object({
 const defaultValue = {
   name: "",
   email: "",
+  password: "",
   role_id: "",
   avatar: "/avatar/user-1.jpg",
 };

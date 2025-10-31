@@ -1,4 +1,8 @@
-import { CreateDocument, UpdateDocument } from "@/common/helper";
+import {
+  CreateDocument,
+  CreateFirebaseUser,
+  UpdateDocument,
+} from "@/common/helper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -11,6 +15,7 @@ import ZSelect from "@/components/z-forms/ZSelect";
 import { useDataContext } from "@/context";
 import { userRef } from "@/db/firebase.db";
 import useForm from "@/hooks/use-form";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { UserSchemaType, getUserSchema } from "@/schema/UserSchema";
 import { Check } from "lucide-react";
@@ -29,7 +34,9 @@ const UserForm = ({
   // -------------------------------------
   // Hooks
   // -------------------------------------
+  const { toast } = useToast();
   const { roles } = useDataContext();
+
   const form = useForm<UserSchemaType>(getUserSchema(defaultValue));
   const loading = form.formState.isSubmitting;
 
@@ -38,17 +45,29 @@ const UserForm = ({
   // -------------------------------------
   const onSubmit = async (data: UserSchemaType) => {
     // for creating
-    if (componentFor === "create") {
-      await CreateDocument({ ref: userRef, data });
+    try {
+      if (componentFor === "create") {
+        const auth_id = await CreateFirebaseUser(data.email, data.password);
+        await CreateDocument({ ref: userRef, data: { ...data, auth_id } });
+      }
+      // for updating
+      else if (componentFor === "update" && defaultValue?.id) {
+        const { id } = defaultValue;
+        await UpdateDocument({ ref: userRef, docId: id, data });
+      }
+      onClose();
+    } catch (error: any) {
+      toast({
+        title: "Something went wrong",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">
+              {JSON.stringify(error?.message || error, null, 2)}
+            </code>
+          </pre>
+        ),
+      });
     }
-
-    // for updating
-    else if (componentFor === "update" && defaultValue?.id) {
-      const { id } = defaultValue;
-      await UpdateDocument({ ref: userRef, docId: id, data });
-    }
-
-    onClose();
   };
 
   // -------------------------------------
@@ -64,14 +83,14 @@ const UserForm = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="py-4 space-y-6">
-          <div className="flex justify-center pt-4">
+          {/* <div className="flex justify-center pt-4">
             <Avatar className={cn("w-24 h-24 ")}>
               <AvatarImage src={selectedAvatar} />
               <AvatarFallback>
                 {selectedAvatar.split("/").pop()?.split(".")[0]}
               </AvatarFallback>
             </Avatar>
-          </div>
+          </div> */}
 
           {fields.map(({ inputType, ...props }) => {
             switch (inputType) {
@@ -79,6 +98,15 @@ const UserForm = ({
               // Input fields
               case "text":
                 return <ZInput control={form.control} {...props} />;
+
+              case "password":
+                return (
+                  <ZInput
+                    control={form.control}
+                    inputProps={{ type: "password" }}
+                    {...props}
+                  />
+                );
 
               // ***
               // Select fields
@@ -110,7 +138,7 @@ const UserForm = ({
                 >
                   <Avatar
                     className={cn(
-                      "w-12 h-12 cursor-pointer transition-all duration-200",
+                      "w-14 h-14 cursor-pointer transition-all duration-200",
                       isSelected && "brightness-50 scale-90 ",
                       !isSelected && "hover:brightness-75"
                     )}
@@ -147,8 +175,8 @@ type fieldType = {
   label: string;
   description: string;
   placeholder: string;
-  inputType: "text" | "select" | "file";
-  name: "name" | "email" | "role_id" | "avatar";
+  inputType: "text" | "select" | "file" | "password";
+  name: "name" | "email" | "role_id" | "avatar" | "password";
 };
 
 const fields: fieldType[] = [
@@ -166,6 +194,13 @@ const fields: fieldType[] = [
     placeholder: "john.doe@example.com",
     description:
       "Enter the employee's official email address, e.g., 'john.doe@example.com'.",
+  },
+  {
+    name: "password",
+    label: "Password",
+    inputType: "password",
+    placeholder: "Password",
+    description: "Enter the employee's password, e.g., '123456'.",
   },
   {
     name: "role_id",

@@ -1,5 +1,17 @@
+import { authRef } from "@/db/firebase.db";
 import { toast } from "@/hooks/use-toast";
-import { addDoc, CollectionReference, doc, DocumentData, updateDoc } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  getAuth,
+} from "firebase/auth";
+import {
+  addDoc,
+  CollectionReference,
+  doc,
+  DocumentData,
+  updateDoc,
+} from "firebase/firestore";
 
 type CreateDocumentProps = {
   data: any;
@@ -22,7 +34,11 @@ type UpdateDocumentProps = {
   ref: CollectionReference<DocumentData, DocumentData>;
 };
 
-export const UpdateDocument = async ({ ref, docId, data }: UpdateDocumentProps) => {
+export const UpdateDocument = async ({
+  ref,
+  docId,
+  data,
+}: UpdateDocumentProps) => {
   const { createdAt, ...restData } = data;
 
   const createdData = {
@@ -33,7 +49,7 @@ export const UpdateDocument = async ({ ref, docId, data }: UpdateDocumentProps) 
   return await WithErrorHandle(updateDoc(doc(ref, docId), createdData));
 };
 
-export const WithErrorHandle = async (promise: Promise<any>) => {
+export const WithErrorHandle = async <T>(promise: Promise<T>): Promise<T> => {
   try {
     return await promise;
   } catch (err: any) {
@@ -41,5 +57,13 @@ export const WithErrorHandle = async (promise: Promise<any>) => {
       title: "Something went wrong",
       description: JSON.stringify(err?.message || err, null, 2),
     });
+    throw err;
   }
+};
+
+export const CreateFirebaseUser = async (email: string, password: string) => {
+  const userCredential = await WithErrorHandle(
+    createUserWithEmailAndPassword(authRef, email, password)
+  );
+  return userCredential.user.uid;
 };
