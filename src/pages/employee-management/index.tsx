@@ -1,15 +1,20 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Department from "../employee-management/department";
-import Designation from "../employee-management/designation";
+import EmployeeList from "./employee-list";
+import Designation from "./designation";
+import Department from "./department";
 
-const AppSettings = () => {
+const EmployeeManagement = () => {
   return (
     <div className=" p-6 mx-auto grid gap-8">
-      <Tabs defaultValue="designation" className="">
-        <TabsList className="grid w-[400px] grid-cols-2 ">
+      <Tabs defaultValue="employee" className="">
+        <TabsList className="grid w-[600px] grid-cols-3 ">
+          <TabsTrigger value="employee">Employee List</TabsTrigger>
           <TabsTrigger value="designation">Manage Designations</TabsTrigger>
           <TabsTrigger value="department">Manage Departments</TabsTrigger>
         </TabsList>
+        <TabsContent value="employee" className="mt-8">
+          <EmployeeList />
+        </TabsContent>
         <TabsContent value="designation" className="mt-8">
           <Designation />
         </TabsContent>
@@ -21,4 +26,4 @@ const AppSettings = () => {
   );
 };
 
-export default AppSettings;
+export default EmployeeManagement;

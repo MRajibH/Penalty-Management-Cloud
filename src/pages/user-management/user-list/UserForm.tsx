@@ -6,60 +6,55 @@ import { ZSelectListType } from "@/components/z-forms/types";
 import ZInput from "@/components/z-forms/ZInput";
 import ZSelect from "@/components/z-forms/ZSelect";
 import { useDataContext } from "@/context";
-import { employeeRef } from "@/db/firebase.db";
+import { userRef } from "@/db/firebase.db";
 import useForm from "@/hooks/use-form";
-import { EmployeeSchemaType, getEmployeeSchema } from "@/schema/EmployeeSchema";
-import { useState } from "react";
+import { UserSchemaType, getUserSchema } from "@/schema/UserSchema";
 
-interface EmployeeFormProps {
+interface UserFormProps {
   onClose: any;
   componentFor?: "update" | "create";
-  defaultValue?: EmployeeSchemaType & { id: string };
+  defaultValue?: UserSchemaType & { id: string };
 }
 
-const EmployeeForm = ({ onClose, defaultValue, componentFor = "create" }: EmployeeFormProps) => {
+const UserForm = ({
+  onClose,
+  defaultValue,
+  componentFor = "create",
+}: UserFormProps) => {
   // -------------------------------------
   // Hooks
   // -------------------------------------
   const { designations } = useDataContext();
-  const form = useForm<EmployeeSchemaType>(getEmployeeSchema(defaultValue));
-
-  // -------------------------------------
-  // States
-  // -------------------------------------
-  const [loading, setLoading] = useState(false);
+  const form = useForm<UserSchemaType>(getUserSchema(defaultValue));
+  const loading = form.formState.isSubmitting;
 
   // -------------------------------------
   // Functions
   // -------------------------------------
-  const onSubmit = async (data: EmployeeSchemaType) => {
-    try {
-      setLoading(true);
-
-      // for creating
-      if (componentFor === "create") {
-        await CreateDocument({ ref: employeeRef, data });
-      }
-
-      // for updating
-      else if (componentFor === "update" && defaultValue?.id) {
-        const { id } = defaultValue;
-        await UpdateDocument({ ref: employeeRef, docId: id, data });
-      }
-
-      onClose();
-    } finally {
-      setLoading(false);
+  const onSubmit = async (data: UserSchemaType) => {
+    // for creating
+    if (componentFor === "create") {
+      await CreateDocument({ ref: userRef, data });
     }
+
+    // for updating
+    else if (componentFor === "update" && defaultValue?.id) {
+      const { id } = defaultValue;
+      await UpdateDocument({ ref: userRef, docId: id, data });
+    }
+
+    onClose();
   };
 
   // -------------------------------------
   // Variables
   // -------------------------------------
-  const options: ZSelectListType[] = designations.map(({ id, designation_name }) => ({
-    label: designation_name,
-    value: id,
-  }));
+  const options: ZSelectListType[] = designations.map(
+    ({ id, designation_name }) => ({
+      label: designation_name,
+      value: id,
+    })
+  );
 
   return (
     <Form {...form}>
@@ -75,7 +70,14 @@ const EmployeeForm = ({ onClose, defaultValue, componentFor = "create" }: Employ
               // ***
               // Select fields
               case "select":
-                return <ZSelect form={form} formKey="designation_id" options={options} {...props} />;
+                return (
+                  <ZSelect
+                    form={form}
+                    formKey="designation_id"
+                    options={options}
+                    {...props}
+                  />
+                );
 
               // ***
               // File fields
@@ -119,7 +121,8 @@ const fields: fieldType[] = [
     label: "Email",
     inputType: "text",
     placeholder: "john.doe@example.com",
-    description: "Enter the employee's official email address, e.g., 'john.doe@example.com'.",
+    description:
+      "Enter the employee's official email address, e.g., 'john.doe@example.com'.",
   },
   {
     name: "phone",
@@ -132,9 +135,10 @@ const fields: fieldType[] = [
     name: "designation_id",
     label: "Designation",
     placeholder: "Select a Designation",
-    description: "Select the designation this employee belongs to, e.g., 'Software Engineer'.",
+    description:
+      "Select the designation this employee belongs to, e.g., 'Software Engineer'.",
     inputType: "select",
   },
 ];
 
-export default EmployeeForm;
+export default UserForm;

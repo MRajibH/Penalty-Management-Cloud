@@ -27,6 +27,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { departmentRef } from "@/db/firebase.db";
+import { departmentType } from "@/context/data-context/types";
+import { DepartmentSchemaType } from "@/schema/DepartmentSchema";
 
 export const CreateDepartment = () => {
   const { open, setOpen, onClose } = useBoolean();
@@ -143,7 +145,7 @@ export const columns: ColumnDef<any>[] = [
 ];
 
 interface EditDepartmentProps extends UseBooleanType {
-  data: departmentType;
+  data: DepartmentSchemaType & { id: string };
 }
 
 const EditDepartment = ({ data, ...boolean }: EditDepartmentProps) => {
