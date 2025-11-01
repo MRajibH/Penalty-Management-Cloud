@@ -1,42 +1,22 @@
 import { Stats } from "@/components/Stats";
-import { Separator } from "@/components/ui/separator";
-import { penaltyCollectionRef } from "@/db/firebase.db";
-import { Penalty } from "@/types";
-import { onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useDataContext } from "@/context";
 
 const today = new Date();
 const last30Days = new Date();
 last30Days.setDate(today.getDate() - 30);
 
 const Dashboard = () => {
-  const [penalties, setPenalties] = useState<Penalty[]>([]);
-
-  useEffect(() => {
-    const unscubscribe = onSnapshot(penaltyCollectionRef, (snapshot) => {
-      const panelties: any = [];
-      snapshot.forEach((doc) => {
-        panelties.push({
-          ...doc.data(),
-          id: doc.id,
-        });
-      });
-
-      setPenalties(panelties);
-    });
-
-    return () => {
-      unscubscribe();
-    };
-  }, []);
+  const { penaltyData } = useDataContext();
 
   const stats = {
-    totalPenalties: penalties.length,
-    totalAmount: penalties.reduce((sum, p) => sum + p.amount, 0),
-    pendingAmount: penalties
+    totalPenalties: penaltyData.length,
+    totalAmount: penaltyData.reduce((sum, p) => sum + Number(p.amount), 0),
+    pendingAmount: penaltyData
       .filter((p) => p.status === "PENDING")
-      .reduce((sum, p) => sum + p.amount, 0),
-    paidAmount: penalties.filter((p) => p.status === "PAID").reduce((sum, p) => sum + p.amount, 0),
+      .reduce((sum, p) => sum + Number(p.amount), 0),
+    paidAmount: penaltyData
+      .filter((p) => p.status === "PAID")
+      .reduce((sum, p) => sum + Number(p.amount), 0),
   };
 
   return (
