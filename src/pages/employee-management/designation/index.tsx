@@ -1,21 +1,17 @@
+import { useDataContext } from "@/context";
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns as defaultColumns, CreateDesignation } from "./utils";
-import { useAuthContext, useDataContext } from "@/context";
 
 const Designation = () => {
-  const { currentUser } = useAuthContext();
-  const { designations } = useDataContext();
+  const { designations, userPermissions } = useDataContext();
 
   let columns = defaultColumns;
   let elements = [<CreateDesignation />];
-
-  if (!currentUser) {
+  if (!userPermissions?.management?.employee_management.includes("create")) {
     elements = [];
-    columns = columns.filter(({ id }) => id != "actions");
   }
-  return (
-    <DataTable columns={columns} data={designations} elements={elements} />
-  );
+
+  return <DataTable columns={columns} data={designations} elements={elements} />;
 };
 
 export default Designation;

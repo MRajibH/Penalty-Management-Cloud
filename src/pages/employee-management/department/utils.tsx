@@ -29,6 +29,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { departmentRef } from "@/db/firebase.db";
 import { departmentType } from "@/context/data-context/types";
 import { DepartmentSchemaType } from "@/schema/DepartmentSchema";
+import { useDataContext } from "@/context";
 
 export const CreateDepartment = () => {
   const { open, setOpen, onClose } = useBoolean();
@@ -59,8 +60,7 @@ export const columns: ColumnDef<any>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -80,23 +80,15 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "department_name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Department Name" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-full">{row.getValue("department_name")}</div>
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Department Name" />,
+    cell: ({ row }) => <div className="w-full">{row.getValue("department_name")}</div>,
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        column={column}
-        title="Created At"
-      />
+      <DataTableColumnHeader align="center" column={column} title="Created At" />
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt")).toDateString();
@@ -108,11 +100,7 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "modifiedAt",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        column={column}
-        title="Modified At"
-      />
+      <DataTableColumnHeader align="center" column={column} title="Modified At" />
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("modifiedAt")).toDateString();
@@ -123,19 +111,23 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     id: "actions",
-    header: ({ column }) => (
-      <DataTableColumnHeader align="center" column={column} title="Action" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
       const EditBoolean = useBoolean();
+      const ViewBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
+      const { userPermissions } = useDataContext();
+      const canUpdate = userPermissions?.management?.employee_management.includes("update");
+      const canDelete = userPermissions?.management?.employee_management.includes("delete");
 
       return (
         <div className="flex justify-center">
           <DataTableRowActions
-            onClickEdit={EditBoolean.onOpen}
-            onClickDelete={DeleteBoolean.onOpen}
+            onClickView={ViewBoolean.onOpen}
+            onClickEdit={canUpdate ? EditBoolean.onOpen : undefined}
+            onClickDelete={canDelete ? DeleteBoolean.onOpen : undefined}
           />
+          <ViewDepartment data={row.original} {...ViewBoolean} />
           <EditDepartment data={row.original} {...EditBoolean} />
           <DeleteDepartment data={row.original} {...DeleteBoolean} />
         </div>
@@ -143,6 +135,26 @@ export const columns: ColumnDef<any>[] = [
     },
   },
 ];
+
+interface ViewDepartmentProps extends UseBooleanType {
+  data: DepartmentSchemaType & { id: string };
+}
+
+const ViewDepartment = ({ data, ...boolean }: ViewDepartmentProps) => {
+  const { open, setOpen, onClose } = boolean;
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>View Department</SheetTitle>
+          <SheetDescription>View the Department data.</SheetDescription>
+        </SheetHeader>
+        <Separator className="mt-6" />
+        <DepartmentForm defaultValue={data} componentFor={"view"} onClose={onClose} />
+      </SheetContent>
+    </Sheet>
+  );
+};
 
 interface EditDepartmentProps extends UseBooleanType {
   data: DepartmentSchemaType & { id: string };
@@ -159,11 +171,7 @@ const EditDepartment = ({ data, ...boolean }: EditDepartmentProps) => {
           <SheetDescription>Update the Department data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
-        <DepartmentForm
-          defaultValue={data}
-          componentFor={"update"}
-          onClose={onClose}
-        />
+        <DepartmentForm defaultValue={data} componentFor={"update"} onClose={onClose} />
       </SheetContent>
     </Sheet>
   );
@@ -189,9 +197,7 @@ const DeleteDepartment = ({ data, ...boolean }: DeleteDepartmentProps) => {
         title: "Something went wrong",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(err?.message || err, null, 2)}
-            </code>
+            <code className="text-white">{JSON.stringify(err?.message || err, null, 2)}</code>
           </pre>
         ),
       });

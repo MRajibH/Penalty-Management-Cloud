@@ -2,17 +2,13 @@ import Profile from "@/components/Profile";
 import SearchBox from "@/components/SearchBox";
 import { Sidebar } from "@/components/Sidebar";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuthContext } from "@/context";
 import { cn } from "@/lib/utils";
-import { LogIn } from "lucide-react";
+import { LogIn, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
@@ -37,9 +33,7 @@ const RootLayout = () => {
         <ResizablePanelGroup
           direction="horizontal"
           onLayout={(sizes: number[]) => {
-            document.cookie = `react-resizable-panels:layout:mail=${JSON.stringify(
-              sizes
-            )}`;
+            document.cookie = `react-resizable-panels:layout:mail=${JSON.stringify(sizes)}`;
           }}
           className="h-full items-stretch"
         >
@@ -51,27 +45,23 @@ const RootLayout = () => {
             maxSize={14}
             onCollapse={() => {
               setIsCollapsed(true);
-              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-                true
-              )}`;
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
             }}
             onResize={() => {
               setIsCollapsed(false);
-              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
-                false
-              )}`;
+              document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
             }}
-            className={cn(
-              isCollapsed &&
-                "min-w-[50px] transition-all duration-300 ease-in-out"
-            )}
+            className={cn(isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
           >
             <Sidebar isCollapsed={isCollapsed} />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
             <div className="h-[52px] flex items-center justify-between px-8 overflow-auto">
-              <h2 className="font-bold text-lg">Dashboard</h2>
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-gray-500 mb-0.5" />
+                <h1 className="font-medium text-gray-600">Break the rule, pay the price</h1>
+              </div>
 
               <div className="flex items-center gap-2">
                 <SearchBox />

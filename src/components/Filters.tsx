@@ -23,18 +23,11 @@ interface FiltersProps {
   onFilterChange: (filters: SearchFilters) => void;
 }
 
-const departments: Department[] = [
-  "Frontend",
-  "Backend",
-  "DevSecOps",
-  "QA",
-  "Mobile",
-  "Design",
-];
+const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mobile", "Design"];
 
 export function Filters({ filters, onFilterChange, className }: FiltersProps) {
   return (
-    <div className={cn("bg-white py-2 rounded-lg space-y-4", className)}>
+    <div className={cn("bg-white  rounded-lg space-y-4", className)}>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <FormItem>
           <Label className="px-1">Department</Label>
@@ -94,10 +87,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
           <Label className="px-1">Start Date</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn("w-full pl-3 text-left font-normal")}
-              >
+              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal")}>
                 {filters.dateRange.start ? (
                   format(filters.dateRange.start, "PPP")
                 ) : (
@@ -111,10 +101,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
                 mode="single"
                 onSelect={(date) => {
                   const year = date?.getFullYear();
-                  const month = String((date?.getMonth() || 0) + 1).padStart(
-                    2,
-                    "0"
-                  ); // Months are 0-indexed
+                  const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
                   const day = String(date?.getDate()).padStart(2, "0"); // Day of the month
                   const value = `${year}-${month}-${day}`;
 
@@ -125,9 +112,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
                 }}
                 selected={new Date(filters.dateRange.start)}
                 defaultMonth={new Date(filters.dateRange.start)}
-                disabled={(date) =>
-                  date > new Date() || date < new Date("1900-01-01")
-                }
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                 // initialFocus
               />
             </PopoverContent>
@@ -138,10 +123,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
           <Label className="px-1">End Date</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn("w-full pl-3 text-left font-normal")}
-              >
+              <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal")}>
                 {filters.dateRange.end ? (
                   format(filters.dateRange.end, "PPP")
                 ) : (
@@ -155,10 +137,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
                 mode="single"
                 onSelect={(date) => {
                   const year = date?.getFullYear();
-                  const month = String((date?.getMonth() || 0) + 1).padStart(
-                    2,
-                    "0"
-                  ); // Months are 0-indexed
+                  const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
                   const day = String(date?.getDate()).padStart(2, "0"); // Day of the month
                   const value = `${year}-${month}-${day}`;
 
@@ -169,9 +148,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
                 }}
                 selected={new Date(filters.dateRange.end)}
                 defaultMonth={new Date(filters.dateRange.end)}
-                disabled={(date) =>
-                  date > new Date() || date < new Date("1900-01-01")
-                }
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                 // initialFocus
               />
             </PopoverContent>

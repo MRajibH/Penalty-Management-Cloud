@@ -1,6 +1,6 @@
-import { DataTable } from "@/components/data-table/DataTable";
-import { columns, CreateUser } from "./utils";
 import { useDataContext } from "@/context";
+import { columns, CreateUser } from "./utils";
+import { DataTable } from "@/components/data-table/DataTable";
 
 const UserList = () => {
   const { users, userPermissions } = useDataContext();

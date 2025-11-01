@@ -27,8 +27,13 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDoc, doc } from "firebase/firestore";
 import { designationRef } from "@/db/firebase.db";
-import { designationType } from "@/context/data-context/types";
+import { designationType, userType } from "@/context/data-context/types";
 import { useDataContext } from "@/context";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Avatar } from "@/components/ui/avatar";
+import { AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback } from "@/components/ui/avatar";
 
 export const CreateDesignation = () => {
   const { open, setOpen, onClose } = useBoolean(false);
@@ -53,14 +58,13 @@ export const CreateDesignation = () => {
   );
 };
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<designationType & { id: string }>[] = [
   {
     id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -80,77 +84,112 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "designation_name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Designation Name" />
-    ),
-    cell: ({ row }) => (
-      <div className="w-full">{row.getValue("designation_name")}</div>
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Designation Name" />,
+    cell: ({ row }) => <div className="w-full">{row.getValue("designation_name")}</div>,
     enableSorting: true,
     enableHiding: true,
   },
+
   {
     accessorKey: "department_id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Department Name" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Department Name" />,
     cell: ({ row }) => {
       const { departmentMapped } = useDataContext();
       const id: string = row.getValue("department_id");
       const departmentName = departmentMapped[id].department_name;
 
-      return <div className="w-full">{departmentName}</div>;
+      return <Badge variant="outline">{departmentName}</Badge>;
     },
     enableSorting: true,
     enableHiding: true,
   },
   {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        column={column}
-        title="Created At"
-      />
+    accessorKey: "order",
+    header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Order" />,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <Badge variant="outline">{row.getValue("order")}</Badge>
+      </div>
     ),
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt")).toDateString();
-      return <div className="w-full text-center">{date}</div>;
-    },
     enableSorting: true,
     enableHiding: true,
   },
   {
-    accessorKey: "modifiedAt",
+    accessorKey: "designation_name",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        column={column}
-        title="Modified At"
-      />
+      <DataTableColumnHeader column={column} title="Employees" align="center" />
     ),
     cell: ({ row }) => {
-      const date = new Date(row.getValue("modifiedAt")).toDateString();
-      return <div className="w-full text-center">{date}</div>;
+      const { employees } = useDataContext();
+      const designation_id: string = row.original.id;
+      const employeesData = employees.filter(
+        (employee) => employee.designation_id === designation_id
+      );
+
+      return (
+        <div className="flex mx-auto -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale w-[300px] justify-center">
+          {employeesData.map((employee) => (
+            <Tooltip key={employee.id}>
+              <TooltipTrigger asChild>
+                <Avatar key={employee.id} className="w-8 h-8 ring-2 ring-white">
+                  <AvatarImage src={employee.avatar} />
+                  <AvatarFallback>{employee.avatar.split("/").pop()?.split(".")[0]}</AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="flex items-center font-medium">
+                {employee.name}
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
+      );
     },
-    enableSorting: true,
-    enableHiding: true,
+    enableSorting: false,
+    enableHiding: false,
   },
+  // {
+  //   accessorKey: "createdAt",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader align="center" column={column} title="Created At" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const date = new Date(row.getValue("createdAt")).toDateString();
+  //     return <div className="w-full text-center">{date}</div>;
+  //   },
+  //   enableSorting: true,
+  //   enableHiding: true,
+  // },
+  // {
+  //   accessorKey: "modifiedAt",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader align="center" column={column} title="Modified At" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     const date = new Date(row.getValue("modifiedAt")).toDateString();
+  //     return <div className="w-full text-center">{date}</div>;
+  //   },
+  //   enableSorting: true,
+  //   enableHiding: true,
+  // },
   {
     id: "actions",
-    header: ({ column }) => (
-      <DataTableColumnHeader align="center" column={column} title="Action" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
       const EditBoolean = useBoolean();
+      const ViewBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
+      const { userPermissions } = useDataContext();
+      const canUpdate = userPermissions?.management?.employee_management.includes("update");
+      const canDelete = userPermissions?.management?.employee_management.includes("delete");
 
       return (
         <div className="flex justify-center">
           <DataTableRowActions
-            onClickEdit={EditBoolean.onOpen}
-            onClickDelete={DeleteBoolean.onOpen}
+            onClickView={ViewBoolean.onOpen}
+            onClickEdit={canUpdate ? EditBoolean.onOpen : undefined}
+            onClickDelete={canDelete ? DeleteBoolean.onOpen : undefined}
           />
+          <ViewDesignation data={row.original} {...ViewBoolean} />
           <EditDesignation data={row.original} {...EditBoolean} />
           <DeleteDesignation data={row.original} {...DeleteBoolean} />
         </div>
@@ -159,6 +198,25 @@ export const columns: ColumnDef<any>[] = [
   },
 ];
 
+interface ViewDesignationProps extends UseBooleanType {
+  data: designationType;
+}
+
+const ViewDesignation = ({ data, ...boolean }: ViewDesignationProps) => {
+  const { open, setOpen, onClose } = boolean;
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>View Designation</SheetTitle>
+          <SheetDescription>View the Designation data.</SheetDescription>
+        </SheetHeader>
+        <Separator className="mt-6" />
+        <DesignationForm defaultValue={data} componentFor={"view"} onClose={onClose} />
+      </SheetContent>
+    </Sheet>
+  );
+};
 interface EditDesignationProps extends UseBooleanType {
   data: designationType;
 }
@@ -174,11 +232,7 @@ const EditDesignation = ({ data, ...boolean }: EditDesignationProps) => {
           <SheetDescription>Update the Designation data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
-        <DesignationForm
-          defaultValue={data}
-          componentFor={"update"}
-          onClose={onClose}
-        />
+        <DesignationForm defaultValue={data} componentFor={"update"} onClose={onClose} />
       </SheetContent>
     </Sheet>
   );
@@ -204,9 +258,7 @@ const DeleteDesignation = ({ data, ...boolean }: DeleteDesignationProps) => {
         title: "Something went wrong",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(err?.message || err, null, 2)}
-            </code>
+            <code className="text-white">{JSON.stringify(err?.message || err, null, 2)}</code>
           </pre>
         ),
       });

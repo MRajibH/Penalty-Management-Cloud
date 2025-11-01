@@ -27,9 +27,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { deleteDoc, doc } from "firebase/firestore";
 import { employeeRef } from "@/db/firebase.db";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { employeesType } from "@/context/data-context/types";
 import { useDataContext } from "@/context";
+import { Badge } from "@/components/ui/badge";
 
 export const CreateEmployee = () => {
   const { open, setOpen, onClose } = useBoolean();
@@ -54,14 +55,15 @@ export const CreateEmployee = () => {
   );
 };
 
-export const columns: ColumnDef<any>[] = [
+export const columns: ColumnDef<
+  employeesType & { designation_order: string; designation_name: string }
+>[] = [
   {
     id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -82,21 +84,16 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "avatar",
     header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        title="Avater"
-        column={column}
-        className="w-[100px]"
-      />
+      <DataTableColumnHeader align="center" title="Avater" column={column} className="w-[100px]" />
     ),
     cell: ({ row }) => {
       const name: string = row.getValue("name") || "";
-      const fallbacK_name =
-        name.split(" ")[0].charAt(0) + (name.split(" ")[1]?.charAt(0) || "");
+      const fallbacK_name = name.split(" ")[0].charAt(0) + (name.split(" ")[1]?.charAt(0) || "");
 
       return (
         <div className="w-[100px] flex justify-center">
           <Avatar className="w-9 h-9">
+            <AvatarImage src={row.getValue("avatar")} />
             <AvatarFallback>{fallbacK_name}</AvatarFallback>
           </Avatar>
         </div>
@@ -107,85 +104,59 @@ export const columns: ColumnDef<any>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => <div className="w-[150px]">{row.getValue("name")}</div>,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    cell: ({ row }) => <div>{row.getValue("name")}</div>,
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    cell: ({ row }) => (
+      <a href={`mailto:${row.getValue("email")}`} className="hover:underline hover:text-blue-700">
+        {row.getValue("email")}
+      </a>
     ),
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "designation_name",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Designation" />,
+    cell: ({ row }) => <Badge variant="outline">{row.getValue("designation_name")}</Badge>,
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "phone",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone" />
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+    cell: ({ row }) => (
+      <a href={`tel:${row.getValue("phone")}`} className="hover:underline hover:text-blue-700">
+        {row.getValue("phone")}
+      </a>
     ),
-    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
-    enableSorting: true,
-    enableHiding: true,
-  },
-  {
-    accessorKey: "designation_id",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        column={column}
-        title="Designation"
-      />
-    ),
-    cell: ({ row }) => {
-      const { designationMapped } = useDataContext();
-      const id: string = row.getValue("designation_id");
-      const { designation_name } = designationMapped[id];
-
-      return <div className="text-center">{designation_name}</div>;
-    },
-    enableSorting: true,
-    enableHiding: true,
-  },
-  {
-    accessorKey: "designation_id",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        align="center"
-        column={column}
-        title="Department"
-      />
-    ),
-    cell: ({ row }) => {
-      const { departmentMapped, designationMapped } = useDataContext();
-      const id: string = row.getValue("designation_id");
-      const { department_id } = designationMapped[id];
-      const { department_name } = departmentMapped[department_id];
-
-      return <div className="text-center">{department_name}</div>;
-    },
     enableSorting: true,
     enableHiding: true,
   },
   {
     id: "actions",
-    header: ({ column }) => (
-      <DataTableColumnHeader align="center" column={column} title="Action" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
       const EditBoolean = useBoolean();
+      const ViewBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
+      const { userPermissions } = useDataContext();
+      const canUpdate = userPermissions?.management?.employee_management.includes("update");
+      const canDelete = userPermissions?.management?.employee_management.includes("delete");
 
       return (
         <div className="flex justify-center">
           <DataTableRowActions
-            onClickEdit={EditBoolean.onOpen}
-            onClickDelete={DeleteBoolean.onOpen}
+            onClickView={ViewBoolean.onOpen}
+            onClickEdit={canUpdate ? EditBoolean.onOpen : undefined}
+            onClickDelete={canDelete ? DeleteBoolean.onOpen : undefined}
           />
+          <ViewEmployee data={row.original} {...ViewBoolean} />
           <EditEmployee data={row.original} {...EditBoolean} />
           <DeleteEmployee data={row.original} {...DeleteBoolean} />
         </div>
@@ -193,6 +164,26 @@ export const columns: ColumnDef<any>[] = [
     },
   },
 ];
+
+interface ViewEmployeeProps extends UseBooleanType {
+  data: employeesType;
+}
+
+const ViewEmployee = ({ data, ...boolean }: ViewEmployeeProps) => {
+  const { open, setOpen, onClose } = boolean;
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>View Employee</SheetTitle>
+          <SheetDescription>View the Employee data.</SheetDescription>
+        </SheetHeader>
+        <Separator className="mt-6" />
+        <EmployeeForm defaultValue={data} componentFor={"view"} onClose={onClose} />
+      </SheetContent>
+    </Sheet>
+  );
+};
 
 interface EditEmployeeProps extends UseBooleanType {
   data: employeesType;
@@ -209,11 +200,7 @@ const EditEmployee = ({ data, ...boolean }: EditEmployeeProps) => {
           <SheetDescription>Update the Employee data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
-        <EmployeeForm
-          defaultValue={data}
-          componentFor={"update"}
-          onClose={onClose}
-        />
+        <EmployeeForm defaultValue={data} componentFor={"update"} onClose={onClose} />
       </SheetContent>
     </Sheet>
   );
@@ -239,9 +226,7 @@ const DeleteEmployee = ({ data, ...boolean }: DeleteEmployeeProps) => {
         title: "Something went wrong",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(err?.message || err, null, 2)}
-            </code>
+            <code className="text-white">{JSON.stringify(err?.message || err, null, 2)}</code>
           </pre>
         ),
       });

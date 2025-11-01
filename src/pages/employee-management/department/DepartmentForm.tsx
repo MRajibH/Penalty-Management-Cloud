@@ -7,14 +7,19 @@ import { getDepartmentSchema, DepartmentSchemaType } from "@/schema/DepartmentSc
 import useForm from "@/hooks/use-form";
 import { CreateDocument, UpdateDocument } from "@/common/helper";
 import ZInput from "@/components/z-forms/ZInput";
+import { Separator } from "@/components/ui/separator";
 
 interface DepartmentFormProps {
   onClose: any;
-  componentFor?: "update" | "create";
+  componentFor?: "update" | "create" | "view";
   defaultValue?: DepartmentSchemaType & { id: string };
 }
 
-const DepartmentForm = ({ onClose, defaultValue, componentFor = "create" }: DepartmentFormProps) => {
+const DepartmentForm = ({
+  onClose,
+  defaultValue,
+  componentFor = "create",
+}: DepartmentFormProps) => {
   // -------------------------------------
   // Hooks
   // -------------------------------------
@@ -54,18 +59,23 @@ const DepartmentForm = ({ onClose, defaultValue, componentFor = "create" }: Depa
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="py-4 space-y-6">
           {fields.map((props) => {
-            return <ZInput control={form.control} {...props} />;
+            return <ZInput control={form.control} disabled={componentFor === "view"} {...props} />;
           })}
         </div>
 
-        <DialogFooter className="gap-2 py-8">
-          <Button type="reset" variant={"outline"}>
-            Close
-          </Button>
-          <Button loading={loading} variant={"default"} type="submit">
-            {componentFor === "update" ? "Update" : "Create"} Department
-          </Button>
-        </DialogFooter>
+        {componentFor !== "view" && (
+          <>
+            <Separator />
+            <DialogFooter className="gap-2 py-8">
+              <Button type="reset" variant={"outline"}>
+                Close
+              </Button>
+              <Button loading={loading} variant={"default"} type="submit">
+                {componentFor === "update" ? "Update" : "Create"} Department
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </form>
     </Form>
   );

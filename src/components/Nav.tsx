@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
+import { Fragment } from "react";
 
 type links1 = {
   type: "link";
@@ -37,7 +38,7 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) => {
           if (!link.hasPermission) {
-            return <></>;
+            return <Fragment key={index}></Fragment>;
           }
 
           if (link.type === "label") {

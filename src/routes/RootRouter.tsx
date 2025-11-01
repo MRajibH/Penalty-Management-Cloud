@@ -4,6 +4,7 @@ import AppSettings from "@/pages/app-settings";
 import Dashboard from "@/pages/dashboard";
 import EmployeeManagement from "@/pages/employee-management";
 import Login from "@/pages/login";
+import Penalties from "@/pages/penalties";
 import Settings from "@/pages/settings";
 import UserManagement from "@/pages/user-management";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
@@ -13,6 +14,7 @@ const RootRouter = () => {
     <Routes>
       <Route path="/app" element={<RootLayout />}>
         <Route index path="dashboard" element={<Dashboard />} />
+        <Route path="penalties" element={<Penalties />} />
         {/* <Route element={<ProtectedRoutes />}> */}
         <Route path="user_management" element={<UserManagement />} />
         <Route path="employee_management" element={<EmployeeManagement />} />
@@ -24,10 +26,7 @@ const RootRouter = () => {
       <Route element={<UnAuthRoutes />}>
         <Route path="/login" element={<Login />} />
       </Route>
-      <Route
-        path="*"
-        element={<Navigate to={"/app/dashboard"} replace={true} />}
-      />
+      <Route path="*" element={<Navigate to={"/app/dashboard"} replace={true} />} />
     </Routes>
   );
 };
@@ -39,11 +38,7 @@ const RootRouter = () => {
 
 const UnAuthRoutes = () => {
   const { currentUser } = useAuthContext();
-  return currentUser ? (
-    <Navigate to={"/app/dashboard"} replace={true} />
-  ) : (
-    <Outlet />
-  );
+  return currentUser ? <Navigate to={"/app/dashboard"} replace={true} /> : <Outlet />;
 };
 
 export default RootRouter;

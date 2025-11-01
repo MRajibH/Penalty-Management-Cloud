@@ -45,6 +45,7 @@ export type employeesType = {
   name: string;
   email: string;
   phone: string;
+  avatar: string;
   createdAt: number;
   modifiedAt: number;
   designation_id: string;
@@ -59,6 +60,7 @@ export type departmentType = {
 
 export type designationType = {
   id: string;
+  order: string;
   createdAt: number;
   modifiedAt: number;
   department_id: string;

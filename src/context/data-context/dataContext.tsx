@@ -12,6 +12,7 @@ import {
 import { getQueryRef, getSnapshotData, mappedFunc } from "./functions";
 import { useAuthContext } from "../auth-context/authContext";
 import { defaultRole } from "@/schema/RoleSchema";
+import Loading from "@/components/Loading";
 
 export const DataContext = createContext({} as DataContextType);
 export const useDataContext = () => useContext(DataContext);
@@ -33,7 +34,7 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     const QueryRoleRef = getQueryRef(roleRef);
     const QueryEmployeeRef = getQueryRef(employeeRef);
     const QueryDepartmentRef = getQueryRef(departmentRef);
-    const QueryDesignationRef = getQueryRef(designationRef);
+    const QueryDesignationRef = getQueryRef(designationRef, "order", "desc");
 
     // ===============================
     // Subcribe collections on mount
@@ -83,7 +84,13 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   // Current user permissions
   // ==================================
   const role_id = currentUser?.role_id;
-  const userPermissions = role_id ? roleMapped[role_id]?.roles : defaultRole;
+  let userPermissions = undefined;
+  if (role_id) {
+    userPermissions = roleMapped[role_id]?.roles;
+  } else {
+    const viewerRole = roles.filter((role) => role.role_name === "Viewer")[0]?.roles;
+    userPermissions = viewerRole || undefined;
+  }
 
   const value: any = {
     // Collections
@@ -104,5 +111,11 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     userPermissions,
   };
 
-  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+  return (
+    <DataContext.Provider value={value}>
+      <DataContext.Consumer>
+        {({ userPermissions }) => <> {userPermissions ? children : <Loading />}</>}
+      </DataContext.Consumer>
+    </DataContext.Provider>
+  );
 };

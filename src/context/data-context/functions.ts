@@ -6,9 +6,7 @@ import {
   QuerySnapshot,
 } from "firebase/firestore";
 
-export const getSnapshotData = (
-  snapshot: QuerySnapshot<DocumentData, DocumentData>
-) => {
+export const getSnapshotData = (snapshot: QuerySnapshot<DocumentData, DocumentData>) => {
   const data: any = [];
   snapshot.forEach((doc) => {
     data.push({ ...doc.data(), id: doc.id });
@@ -17,9 +15,11 @@ export const getSnapshotData = (
 };
 
 export const getQueryRef = (
-  ref: CollectionReference<DocumentData, DocumentData>
+  ref: CollectionReference<DocumentData, DocumentData>,
+  OrderBy: string = "createdAt",
+  Order: "asc" | "desc" = "asc"
 ) => {
-  return query(ref, orderBy("createdAt", "asc"));
+  return query(ref, orderBy(OrderBy, Order));
 };
 
 export const mappedFunc = (previous: any, current: any) => {

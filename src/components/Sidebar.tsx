@@ -4,7 +4,6 @@ import Profile from "./Profile";
 import { Separator } from "./ui/separator";
 import { BookOpen, FileText, Home, Settings2, ShieldAlert, Users2 } from "lucide-react";
 import { useAuthContext, useDataContext } from "@/context";
-import { defaultRole } from "@/schema/RoleSchema";
 interface SidebarProps {
   isCollapsed: boolean;
 }

@@ -1,9 +1,4 @@
-import {
-  CreateDocument,
-  CreateFirebaseUser,
-  UpdateDocument,
-  UpdateFirebaseUser,
-} from "@/common/helper";
+import { CreateFirebaseUser, UpdateFirebaseUser } from "@/common/helper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -14,7 +9,6 @@ import ZBase from "@/components/z-forms/ZBase";
 import ZInput from "@/components/z-forms/ZInput";
 import ZSelect from "@/components/z-forms/ZSelect";
 import { useAuthContext, useDataContext } from "@/context";
-import { userRef } from "@/db/firebase.db";
 import useForm from "@/hooks/use-form";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -177,7 +171,6 @@ const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormPr
         {componentFor !== "view" && (
           <>
             <Separator />
-
             <DialogFooter className="gap-2 py-4">
               <Button type="reset" variant={"outline"} onClick={onClose}>
                 Close

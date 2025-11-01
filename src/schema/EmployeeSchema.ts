@@ -9,6 +9,7 @@ const schema = z.object({
   email: z.string().email("Must be a valid email address."),
   phone: z.string(),
   designation_id: z.string(),
+  avatar: z.string().min(1, { message: "Avatar is required." }),
 });
 
 // Default values for the form fields
@@ -17,6 +18,7 @@ const defaultValue = {
   email: "",
   phone: "",
   designation_id: "",
+  avatar: "/avatar/user-1.jpg",
 };
 
 export type EmployeeSchemaType = z.infer<typeof schema>;
