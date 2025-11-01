@@ -1,4 +1,9 @@
-import { CreateDocument, CreateFirebaseUser, UpdateDocument } from "@/common/helper";
+import {
+  CreateDocument,
+  CreateFirebaseUser,
+  UpdateDocument,
+  UpdateFirebaseUser,
+} from "@/common/helper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -19,7 +24,7 @@ import { Check } from "lucide-react";
 interface UserFormProps {
   onClose: any;
   componentFor?: "update" | "create" | "view";
-  defaultValue?: UserSchemaType & { id: string };
+  defaultValue?: UserSchemaType & { id: string; auth_id: string };
 }
 
 const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormProps) => {
@@ -52,11 +57,7 @@ const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormPr
        */
       //--------------------------------------------------------------------------------------------
       if (componentFor === "create") {
-        // create firebase user
-        const auth_id = await CreateFirebaseUser(currentUser.uid, data.email, data.password);
-
-        // create user in database
-        await CreateDocument({ ref: userRef, data: { ...data, auth_id } });
+        await CreateFirebaseUser(currentUser.uid, data.email, data.password, data);
       }
 
       //--------------------------------------------------------------------------------------------
@@ -65,8 +66,8 @@ const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormPr
        */
       //--------------------------------------------------------------------------------------------
       else if (componentFor === "update" && defaultValue?.id) {
-        const { id } = defaultValue;
-        await UpdateDocument({ ref: userRef, docId: id, data });
+        const { id, auth_id } = defaultValue;
+        await UpdateFirebaseUser(auth_id, data.email, data.password, id, data);
       }
 
       //--------------------------------------------------------------------------------------------

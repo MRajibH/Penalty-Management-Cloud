@@ -3,7 +3,13 @@ import { roleType } from "@/context/data-context/types";
 import { authRef, roleRef, userRef } from "@/db/firebase.db";
 import { toast } from "@/hooks/use-toast";
 import { defaultRole } from "@/schema/RoleSchema";
-import { createUserWithEmailAndPassword, deleteUser, getAuth } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  getAuth,
+  updateEmail,
+  updatePassword,
+} from "firebase/auth";
 import {
   addDoc,
   CollectionReference,
@@ -64,7 +70,7 @@ export const getUserByAuthId = async (auth_id: string) => {
   const q = query(userRef, where("auth_id", "==", auth_id));
   const querySnapshot = await getDocs(q);
   if (querySnapshot.empty) {
-    throw new Error("User not found");
+    return {};
   }
   return querySnapshot.docs[0].data();
 };
@@ -93,13 +99,34 @@ export const signInCurrentUser = async (auth_id: string) => {
 export const CreateFirebaseUser = async (
   current_auth_id: string,
   email: string,
-  password: string
+  password: string,
+  data: any
 ) => {
   const userCredential = await WithErrorHandle(
     createUserWithEmailAndPassword(authRef, email, password)
   );
+  const auth_id = userCredential.user.uid;
   await signInCurrentUser(current_auth_id);
-  return userCredential.user.uid;
+  await CreateDocument({ ref: userRef, data: { ...data, auth_id } });
+};
+
+export const UpdateFirebaseUser = async (
+  update_auth_id: string,
+  email: string,
+  password: string,
+  docId: string,
+  data: any
+) => {
+  const auth = getAuth();
+  if (!auth.currentUser) {
+    throw new Error("Please login to continue");
+  }
+  const current_auth_id = auth.currentUser.uid;
+  await signInCurrentUser(update_auth_id);
+  await WithErrorHandle(updateEmail(auth.currentUser, email));
+  await WithErrorHandle(updatePassword(auth.currentUser, password));
+  await UpdateDocument({ ref: userRef, docId, data });
+  await signInCurrentUser(current_auth_id);
 };
 
 export const DeleteFirebaseUser = async (delete_auth_id: string) => {
