@@ -26,6 +26,8 @@ const initialFilters: SearchFilters = {
 const Penalties = () => {
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
   const dataContext = useDataContext();
+  const userPermissions = dataContext.userPermissions;
+  const canCreatePenalty = userPermissions?.overview?.penalties?.includes("create");
 
   const processedPenaltyData = processPenaltyData(dataContext, filters);
 
@@ -45,9 +47,11 @@ const Penalties = () => {
             />
             <Filters filters={filters} onFilterChange={setFilters} />
 
-            <div className="absolute right-6 top-6">
-              <CreatePenalty />
-            </div>
+            {canCreatePenalty && (
+              <div className="absolute right-6 top-6">
+                <CreatePenalty />
+              </div>
+            )}
           </div>
         </CardHeader>
         <Separator />

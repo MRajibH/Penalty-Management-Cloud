@@ -123,27 +123,28 @@ export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
 
         <Separator />
         <PenaltyList penalties={penalties} />
-        <Separator className="mb-6" />
-
-        <CardFooter className="gap-4">
-          {canUpdatePenalty && (
-            <>
-              <Button
-                variant={"outline"}
-                className="w-full"
-                onClick={() => setDialogState({ open: true, type: "disputeAllPenalty" })}
-              >
-                Dispute all
-              </Button>
-              <Button
-                className="w-full"
-                onClick={() => setDialogState({ open: true, type: "markAllAsPaid" })}
-              >
-                Mark all as Paid
-              </Button>
-            </>
-          )}
-        </CardFooter>
+        {canUpdatePenalty && (
+          <>
+            <Separator className="mb-6" />
+            <CardFooter className="gap-4">
+              <>
+                <Button
+                  variant={"outline"}
+                  className="w-full"
+                  onClick={() => setDialogState({ open: true, type: "disputeAllPenalty" })}
+                >
+                  Dispute all
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={() => setDialogState({ open: true, type: "markAllAsPaid" })}
+                >
+                  Mark all as Paid
+                </Button>
+              </>
+            </CardFooter>
+          </>
+        )}
       </Card>
 
       <Dialog
@@ -185,11 +186,14 @@ export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
 
 const PenaltyList = ({ penalties }: { penalties: ProcessedPenaltyDataType["penalties"] }) => {
   const { toast } = useToast();
+  const { userPermissions } = useDataContext();
   const [loading, setLoading] = useState(false);
   const { open, setOpen, onOpen, onClose } = useBoolean();
   const [selectedPenalty, setSelectedPenalty] = useState<
     ProcessedPenaltyDataType["penalties"][0] | null
   >(null);
+
+  const canUpdatePenalty = userPermissions?.overview?.penalties?.includes("update");
 
   const handleClick = async (status: "DISPUTED" | "PAID") => {
     try {
@@ -245,7 +249,7 @@ const PenaltyList = ({ penalties }: { penalties: ProcessedPenaltyDataType["penal
                 </Badge>
               </div>
 
-              {penalty.status === "PENDING" ? (
+              {penalty.status === "PENDING" && canUpdatePenalty ? (
                 <span
                   className="flex-1 text-gray-600 hover:underline cursor-pointer hover:text-primary"
                   onClick={() => handlePenaltyClick(penalty)}
