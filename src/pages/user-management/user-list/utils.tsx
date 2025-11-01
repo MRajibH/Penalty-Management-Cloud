@@ -20,8 +20,6 @@ import { useAuthContext, useDataContext } from "@/context";
 import { Badge } from "@/components/ui/badge";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
 import { useToast } from "@/hooks/use-toast";
-import { deleteDoc, doc } from "firebase/firestore";
-import { userRef } from "@/db/firebase.db";
 import {
   Dialog,
   DialogContent,
@@ -168,7 +166,7 @@ const ViewUser = ({ data, ...boolean }: ViewUserProps) => {
         <UserForm
           onClose={onClose}
           componentFor={"view"}
-          defaultValue={data as unknown as UserSchemaType & { id: string }}
+          defaultValue={data as unknown as UserSchemaType & { id: string; auth_id: string }}
         />
       </SheetContent>
     </Sheet>
@@ -193,7 +191,7 @@ const EditUser = ({ data, ...boolean }: EditUserProps) => {
         <UserForm
           onClose={onClose}
           componentFor={"update"}
-          defaultValue={data as unknown as UserSchemaType & { id: string }}
+          defaultValue={data as unknown as UserSchemaType & { id: string; auth_id: string }}
         />
       </SheetContent>
     </Sheet>
@@ -213,11 +211,7 @@ const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
     const { id } = data;
     try {
       setLoading(true);
-      // delete firebase user
-      await DeleteFirebaseUser(data.auth_id);
-
-      // delete user from database
-      await deleteDoc(doc(userRef, id));
+      await DeleteFirebaseUser(data.auth_id, id);
       onClose();
     } catch (err: any) {
       toast({

@@ -13,6 +13,7 @@ import {
 import {
   addDoc,
   CollectionReference,
+  deleteDoc,
   doc,
   DocumentData,
   getDoc,
@@ -129,7 +130,7 @@ export const UpdateFirebaseUser = async (
   await signInCurrentUser(current_auth_id);
 };
 
-export const DeleteFirebaseUser = async (delete_auth_id: string) => {
+export const DeleteFirebaseUser = async (delete_auth_id: string, docId: string) => {
   const auth = getAuth();
   if (!auth.currentUser) {
     throw new Error("Please login to continue");
@@ -138,4 +139,5 @@ export const DeleteFirebaseUser = async (delete_auth_id: string) => {
   await signInCurrentUser(delete_auth_id);
   await WithErrorHandle(deleteUser(auth.currentUser));
   await signInCurrentUser(current_auth_id);
+  await deleteDoc(doc(userRef, docId));
 };
