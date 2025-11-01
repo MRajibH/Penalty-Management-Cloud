@@ -12,7 +12,7 @@ import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import RoleForm from "./RoleForm";
 import { ColumnDef } from "@tanstack/react-table";
-import { RolePermissions, roleType } from "@/context/data-context/types";
+import { roleType } from "@/context/data-context/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
@@ -31,11 +31,7 @@ import {
 import { RoleSchemaType } from "@/schema/RoleSchema";
 import { useDataContext } from "@/context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 
 export const CreateRole = () => {
@@ -67,8 +63,7 @@ export const columns: ColumnDef<roleType & { id: string }>[] = [
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -88,39 +83,30 @@ export const columns: ColumnDef<roleType & { id: string }>[] = [
   },
   {
     accessorKey: "role_name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Role Name" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role Name" />,
 
     enableSorting: true,
     enableHiding: true,
   },
   {
     accessorKey: "roles",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Users" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Users" align="center" />,
     cell: ({ row }) => {
       const { users } = useDataContext();
       const role_id: string = row.original.id;
       const usersData = users.filter((user) => user.role_id === role_id);
 
       return (
-        <div className="flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+        <div className="flex mx-auto -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale w-[300px] justify-center">
           {usersData.map((user) => (
             <Tooltip key={user.id}>
               <TooltipTrigger asChild>
                 <Avatar key={user.id} className="w-8 h-8 ring-2 ring-white">
                   <AvatarImage src={user.avatar} />
-                  <AvatarFallback>
-                    {user.avatar.split("/").pop()?.split(".")[0]}
-                  </AvatarFallback>
+                  <AvatarFallback>{user.avatar.split("/").pop()?.split(".")[0]}</AvatarFallback>
                 </Avatar>
               </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                className="flex items-center font-medium"
-              >
+              <TooltipContent side="top" className="flex items-center font-medium">
                 {user.name}
               </TooltipContent>
             </Tooltip>
@@ -131,42 +117,54 @@ export const columns: ColumnDef<roleType & { id: string }>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "roles",
-  //   header: ({ column }) => (
-  //     <DataTableColumnHeader column={column} title="Users" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     const roles: string = row.getValue("roles");
-  //     const rolesArray = Object.keys(roles)
-  //       .map((role) => Object.keys(roles[role as any]))
-  //       .flat()
-  //       .join(", ");
+  {
+    accessorKey: "roles",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Permissions" />,
+    cell: ({ row }) => {
+      const roles: string = row.getValue("roles");
+      const rolesArray = Object.keys(roles)
+        .map((role) => {
+          return Object.keys(roles[role as any]).filter((key) => {
+            return roles[role as any][key as any].length > 0;
+          });
+        })
+        .flat()
+        .sort();
 
-  //     return (
-  //       <div className="flex flex-wrap gap-2 w-[350px] text-xs font-medium">
-  //         {rolesArray}
-  //       </div>
-  //     );
-  //   },
-  //   enableSorting: false,
-  //   enableHiding: true,
-  // },
+      // badge
+      return (
+        <div className="flex flex-wrap gap-2 w-full text-xs font-medium">
+          {rolesArray.map((role) => (
+            <Badge variant="outline" key={role}>
+              {role.charAt(0).toUpperCase() + role.slice(1).split("_").join(" ")}
+            </Badge>
+          ))}
+        </div>
+      );
+    },
+    enableSorting: false,
+    enableHiding: true,
+  },
   {
     id: "actions",
-    header: ({ column }) => (
-      <DataTableColumnHeader align="center" column={column} title="Action" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
+      const ViewBoolean = useBoolean();
       const EditBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
+      const { userPermissions } = useDataContext();
+
+      const canUpdate = userPermissions?.management?.users_management.includes("update");
+      const canDelete = userPermissions?.management?.users_management.includes("delete");
 
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center w-[120px] mx-auto">
           <DataTableRowActions
-            onClickEdit={EditBoolean.onOpen}
-            onClickDelete={DeleteBoolean.onOpen}
+            onClickView={ViewBoolean.onOpen}
+            onClickEdit={canUpdate ? EditBoolean.onOpen : undefined}
+            onClickDelete={canDelete ? DeleteBoolean.onOpen : undefined}
           />
+          <ViewRole data={row.original} {...ViewBoolean} />
           <EditRole data={row.original} {...EditBoolean} />
           <DeleteRole data={row.original} {...DeleteBoolean} />
         </div>
@@ -174,6 +172,30 @@ export const columns: ColumnDef<roleType & { id: string }>[] = [
     },
   },
 ];
+
+interface ViewRoleProps extends UseBooleanType {
+  data: roleType;
+}
+
+const ViewRole = ({ data, ...boolean }: ViewRoleProps) => {
+  const { open, setOpen, onClose } = boolean;
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>View Role </SheetTitle>
+          <SheetDescription>View the Role data.</SheetDescription>
+        </SheetHeader>
+        <Separator className="mt-6" />
+        <RoleForm
+          onClose={onClose}
+          componentFor={"view"}
+          defaultValue={data as unknown as RoleSchemaType & { id: string }}
+        />
+      </SheetContent>
+    </Sheet>
+  );
+};
 
 interface EditRoleProps extends UseBooleanType {
   data: roleType;
@@ -220,9 +242,7 @@ const DeleteRole = ({ data, ...boolean }: DeleteRoleProps) => {
         title: "Something went wrong",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(err?.message || err, null, 2)}
-            </code>
+            <code className="text-white">{JSON.stringify(err?.message || err, null, 2)}</code>
           </pre>
         ),
       });

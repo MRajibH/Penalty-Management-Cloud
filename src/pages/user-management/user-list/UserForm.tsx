@@ -18,7 +18,7 @@ import { Check } from "lucide-react";
 
 interface UserFormProps {
   onClose: any;
-  componentFor?: "update" | "create";
+  componentFor?: "update" | "create" | "view";
   defaultValue?: UserSchemaType & { id: string };
 }
 
@@ -96,75 +96,97 @@ const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormPr
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="py-4 space-y-6">
-          {/* <div className="flex justify-center pt-4">
-            <Avatar className={cn("w-24 h-24 ")}>
-              <AvatarImage src={selectedAvatar} />
-              <AvatarFallback>
-                {selectedAvatar.split("/").pop()?.split(".")[0]}
-              </AvatarFallback>
-            </Avatar>
-          </div> */}
+          {componentFor === "view" && (
+            <div className="flex justify-center pt-4">
+              <Avatar className={cn("w-32 h-32 ")}>
+                <AvatarImage src={selectedAvatar} />
+                <AvatarFallback>{selectedAvatar.split("/").pop()?.split(".")[0]}</AvatarFallback>
+              </Avatar>
+            </div>
+          )}
 
           {fields.map(({ inputType, ...props }) => {
             switch (inputType) {
               // ***
               // Input fields
               case "text":
-                return <ZInput control={form.control} {...props} />;
+                return (
+                  <ZInput control={form.control} disabled={componentFor === "view"} {...props} />
+                );
 
               case "password":
                 return (
-                  <ZInput control={form.control} inputProps={{ type: "password" }} {...props} />
+                  <ZInput
+                    control={form.control}
+                    inputProps={{ type: "password" }}
+                    disabled={componentFor === "view"}
+                    {...props}
+                  />
                 );
 
               // ***
               // Select fields
               case "select":
-                return <ZSelect form={form} formKey="role_id" options={options} {...props} />;
+                return (
+                  <ZSelect
+                    form={form}
+                    formKey="role_id"
+                    options={options}
+                    disabled={componentFor === "view"}
+                    {...props}
+                  />
+                );
             }
           })}
         </div>
 
-        <Separator />
+        {componentFor !== "view" && (
+          <>
+            <Separator />
+            <ZBase control={form.control} {...user_avatar_fields}>
+              <div className="grid grid-cols-5 gap-6 py-4">
+                {Array.from({ length: 10 }).map((_, index) => {
+                  const src = `/avatar/user-${index + 1}.jpg`;
+                  const isSelected = selectedAvatar === src;
 
-        <ZBase control={form.control} {...user_avatar_fields}>
-          <div className="grid grid-cols-5 gap-6 py-4">
-            {Array.from({ length: 10 }).map((_, index) => {
-              const src = `/avatar/user-${index + 1}.jpg`;
-              const isSelected = selectedAvatar === src;
+                  return (
+                    <div key={index} className="col-span-1 flex justify-center relative ">
+                      <Avatar
+                        className={cn(
+                          "w-14 h-14 cursor-pointer transition-all duration-200",
+                          isSelected && "brightness-50 scale-90 ",
+                          !isSelected && "hover:brightness-75"
+                        )}
+                        onClick={() => form.setValue("avatar", src)}
+                      >
+                        <AvatarImage src={src} />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      {isSelected && (
+                        <Check className="w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </ZBase>
+          </>
+        )}
 
-              return (
-                <div key={index} className="col-span-1 flex justify-center relative ">
-                  <Avatar
-                    className={cn(
-                      "w-14 h-14 cursor-pointer transition-all duration-200",
-                      isSelected && "brightness-50 scale-90 ",
-                      !isSelected && "hover:brightness-75"
-                    )}
-                    onClick={() => form.setValue("avatar", src)}
-                  >
-                    <AvatarImage src={src} />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  {isSelected && (
-                    <Check className="w-4 h-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </ZBase>
+        {componentFor !== "view" && (
+          <>
+            <Separator />
 
-        <Separator />
-
-        <DialogFooter className="gap-2 py-4">
-          <Button type="reset" variant={"outline"} onClick={onClose}>
-            Close
-          </Button>
-          <Button loading={loading} variant={"default"} type="submit">
-            {componentFor === "update" ? "Update" : "Create"} Employee
-          </Button>
-        </DialogFooter>
+            <DialogFooter className="gap-2 py-4">
+              <Button type="reset" variant={"outline"} onClick={onClose}>
+                Close
+              </Button>
+              <Button loading={loading} variant={"default"} type="submit">
+                {componentFor === "update" ? "Update" : "Create"} Employee
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </form>
     </Form>
   );

@@ -77,4 +77,6 @@ export interface DataContextType {
   employeeMapped: Record<string, employeesType>;
   departmentMapped: Record<string, departmentType>;
   designationMapped: Record<string, designationType>;
+
+  userPermissions: RolePermissions;
 }

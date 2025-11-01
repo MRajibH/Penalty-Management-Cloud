@@ -10,11 +10,15 @@ import {
   userType,
 } from "./types";
 import { getQueryRef, getSnapshotData, mappedFunc } from "./functions";
+import { useAuthContext } from "../auth-context/authContext";
+import { defaultRole } from "@/schema/RoleSchema";
 
 export const DataContext = createContext({} as DataContextType);
 export const useDataContext = () => useContext(DataContext);
 
 export const DataContextProvider = ({ children }: { children: ReactNode }) => {
+  const { currentUser } = useAuthContext();
+
   const [users, setUsers] = useState<userType[]>([]);
   const [roles, setRoles] = useState<roleType[]>([]);
   const [employees, setEmployees] = useState<employeesType[]>([]);
@@ -75,7 +79,11 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const departmentMapped = departments.reduce(mappedFunc, {} as any);
   const designationMapped = designations.reduce(mappedFunc, {} as any);
 
-  console.log(roles);
+  // ==================================
+  // Current user permissions
+  // ==================================
+  const role_id = currentUser?.role_id;
+  const userPermissions = role_id ? roleMapped[role_id]?.roles : defaultRole;
 
   const value: any = {
     // Collections
@@ -91,6 +99,9 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     employeeMapped,
     departmentMapped,
     designationMapped,
+
+    // Current user permissions
+    userPermissions,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

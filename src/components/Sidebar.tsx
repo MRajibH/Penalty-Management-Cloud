@@ -46,11 +46,8 @@ export const Logo = ({ className }: { className?: string }) => (
 );
 
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
-  const { roleMapped } = useDataContext();
   const { currentUser } = useAuthContext();
-
-  const role_id = currentUser?.role_id;
-  const permissions = role_id ? roleMapped[role_id]?.roles : defaultRole;
+  const { userPermissions } = useDataContext();
 
   return (
     <div className="flex flex-col h-full">
@@ -71,8 +68,8 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             type: "label",
             title: "Overview",
             hasPermission:
-              permissions?.overview?.dashboard.includes("view") ||
-              permissions?.overview?.penalties.includes("view"),
+              userPermissions?.overview?.dashboard.includes("view") ||
+              userPermissions?.overview?.penalties.includes("view"),
           },
           {
             type: "link",
@@ -81,7 +78,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Home,
             variant: "default",
-            hasPermission: permissions?.overview?.dashboard.includes("view"),
+            hasPermission: userPermissions?.overview?.dashboard.includes("view"),
           },
           {
             type: "link",
@@ -90,15 +87,15 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: ShieldAlert,
             variant: "ghost",
-            hasPermission: permissions?.overview?.penalties.includes("view"),
+            hasPermission: userPermissions?.overview?.penalties.includes("view"),
           },
           {
             type: "label",
             title: "Management",
             hasPermission:
-              permissions?.management?.users_management.includes("view") ||
-              permissions?.management?.employee_management.includes("view") ||
-              permissions?.management?.manage_constitution.includes("view"),
+              userPermissions?.management?.users_management.includes("view") ||
+              userPermissions?.management?.employee_management.includes("view") ||
+              userPermissions?.management?.manage_constitution.includes("view"),
           },
           {
             type: "link",
@@ -107,7 +104,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Users2,
             variant: "ghost",
-            hasPermission: permissions?.management?.users_management.includes("view"),
+            hasPermission: userPermissions?.management?.users_management.includes("view"),
           },
           {
             type: "link",
@@ -116,7 +113,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Users2,
             variant: "ghost",
-            hasPermission: permissions?.management?.employee_management.includes("view"),
+            hasPermission: userPermissions?.management?.employee_management.includes("view"),
           },
           {
             type: "link",
@@ -125,14 +122,14 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: BookOpen,
             variant: "ghost",
-            hasPermission: permissions?.management?.manage_constitution.includes("view"),
+            hasPermission: userPermissions?.management?.manage_constitution.includes("view"),
           },
           {
             type: "label",
             title: "Settings",
             hasPermission:
-              permissions?.settings?.app_logs.includes("view") ||
-              permissions?.settings?.app_settings.includes("view"),
+              userPermissions?.settings?.app_logs.includes("view") ||
+              userPermissions?.settings?.app_settings.includes("view"),
           },
           {
             type: "link",
@@ -141,7 +138,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: FileText,
             variant: "ghost",
-            hasPermission: permissions?.settings?.app_logs.includes("view"),
+            hasPermission: userPermissions?.settings?.app_logs.includes("view"),
           },
           {
             type: "link",
@@ -150,7 +147,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Settings2,
             variant: "ghost",
-            hasPermission: permissions?.settings?.app_settings.includes("view"),
+            hasPermission: userPermissions?.settings?.app_settings.includes("view"),
           },
         ]}
       />

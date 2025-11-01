@@ -26,9 +26,10 @@ interface ZSelect extends DefaultZFormProps {
   formKey: string;
   form: UseFormReturn<any>;
   options: ZSelectListType[];
+  disabled?: boolean;
 }
 
-const ZSelect = ({ form, formKey, options, ...formData }: ZSelect) => {
+const ZSelect = ({ form, formKey, options, disabled, ...formData }: ZSelect) => {
   const [open, setOpen] = useState(false);
   const { name, label, placeholder, description } = formData;
 
@@ -45,14 +46,11 @@ const ZSelect = ({ form, formKey, options, ...formData }: ZSelect) => {
                 <Button
                   variant="outline"
                   role="combobox"
-                  className={cn(
-                    "w-full justify-between",
-                    !field.value && "text-muted-foreground"
-                  )}
+                  className={cn("w-full justify-between", !field.value && "text-muted-foreground")}
+                  disabled={disabled}
                 >
                   {field.value
-                    ? options.find((option) => option.value === field.value)
-                        ?.label
+                    ? options.find((option) => option.value === field.value)?.label
                     : placeholder}
                   <ChevronsUpDown className="opacity-50" />
                 </Button>
@@ -60,10 +58,7 @@ const ZSelect = ({ form, formKey, options, ...formData }: ZSelect) => {
             </PopoverTrigger>
             <PopoverContent className="w-[335px] lg:w-[450px] p-0">
               <Command>
-                <CommandInput
-                  placeholder={`Search ${label}...`}
-                  className="h-9"
-                />
+                <CommandInput placeholder={`Search ${label}...`} className="h-9" />
                 <CommandList>
                   <CommandEmpty>No {label} found.</CommandEmpty>
                   <CommandGroup>

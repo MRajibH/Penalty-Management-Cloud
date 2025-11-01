@@ -25,15 +25,15 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     // setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const { role_id } = await getUserByAuthId(user.uid);
+        const { role_id, avatar, name } = await getUserByAuthId(user.uid);
         setCurrentUser({
           role_id,
           uid: user.uid,
           email: user.email || "",
           providerId: user.providerId,
-          photoURL: user.photoURL || "",
           emailVerified: user.emailVerified,
-          displayName: user.displayName || "",
+          photoURL: avatar || user.photoURL || "",
+          displayName: name || user.displayName || "",
         });
       } else {
         setCurrentUser(undefined);

@@ -1,4 +1,4 @@
-import { Edit3, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit3, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,21 +8,54 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { MouseEventHandler } from "react";
+import { Fragment, MouseEventHandler } from "react";
 
 interface DataTableRowActionsProps {
   disabledEdit?: boolean;
   disabledDelete?: boolean;
+
+  onClickView?: MouseEventHandler<HTMLDivElement>;
   onClickEdit?: MouseEventHandler<HTMLDivElement>;
   onClickDelete?: MouseEventHandler<HTMLDivElement>;
 }
 
 export function DataTableRowActions({
+  onClickView,
   onClickEdit,
   onClickDelete,
   disabledEdit,
   disabledDelete,
 }: DataTableRowActionsProps) {
+  const renderView = (
+    <DropdownMenuItem onClick={onClickView}>
+      <Eye />
+      View
+    </DropdownMenuItem>
+  );
+
+  const renderEdit = (
+    <DropdownMenuItem onClick={onClickEdit} disabled={disabledEdit}>
+      <Edit3 />
+      Edit
+    </DropdownMenuItem>
+  );
+
+  const renderDelete = (
+    <DropdownMenuItem
+      onClick={onClickDelete}
+      className="text-red-600 focus:bg-red-50 focus:text-red-600"
+      disabled={disabledDelete}
+    >
+      <Trash2 />
+      Delete
+    </DropdownMenuItem>
+  );
+
+  const renderChildrens = [];
+  onClickView && renderChildrens.push(renderView);
+  onClickEdit && renderChildrens.push(renderEdit);
+  onClickDelete && renderChildrens.push(renderDelete);
+
   return (
     <>
       <DropdownMenu>
@@ -33,19 +66,12 @@ export function DataTableRowActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem onClick={onClickEdit} disabled={disabledEdit}>
-            <Edit3 />
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={onClickDelete}
-            className="text-red-600 focus:bg-red-50 focus:text-red-600"
-            disabled={disabledDelete}
-          >
-            <Trash2 />
-            Delete
-          </DropdownMenuItem>
+          {renderChildrens.map((child, index) => (
+            <Fragment key={index}>
+              {index > 0 && <DropdownMenuSeparator />}
+              {child}
+            </Fragment>
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

@@ -124,8 +124,13 @@ export const columns: ColumnDef<UserSchemaType & { id: string; auth_id: string }
     header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
       const EditBoolean = useBoolean();
+      const ViewBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
       const { currentUser } = useAuthContext();
+      const { userPermissions } = useDataContext();
+
+      const canUpdate = userPermissions?.management?.users_management.includes("update");
+      const canDelete = userPermissions?.management?.users_management.includes("delete");
 
       const isMySelf = row.original.auth_id === currentUser?.uid;
       // const isAdmin = currentUser?.role === "admin";
@@ -134,16 +139,41 @@ export const columns: ColumnDef<UserSchemaType & { id: string; auth_id: string }
         <div className="flex justify-center">
           <DataTableRowActions
             disabledDelete={isMySelf}
-            onClickEdit={EditBoolean.onOpen}
-            onClickDelete={DeleteBoolean.onOpen}
+            onClickView={ViewBoolean.onOpen}
+            onClickEdit={canUpdate ? EditBoolean.onOpen : undefined}
+            onClickDelete={canDelete ? DeleteBoolean.onOpen : undefined}
           />
           <EditUser data={row.original} {...EditBoolean} />
           <DeleteUser data={row.original} {...DeleteBoolean} />
+          <ViewUser data={row.original} {...ViewBoolean} />
         </div>
       );
     },
   },
 ];
+
+interface ViewUserProps extends UseBooleanType {
+  data: UserSchemaType & { id: string };
+}
+
+const ViewUser = ({ data, ...boolean }: ViewUserProps) => {
+  const { open, setOpen, onClose } = boolean;
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetContent className="lg:min-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>View User</SheetTitle>
+        </SheetHeader>
+        <Separator className="mt-6" />
+        <UserForm
+          onClose={onClose}
+          componentFor={"view"}
+          defaultValue={data as unknown as UserSchemaType & { id: string }}
+        />
+      </SheetContent>
+    </Sheet>
+  );
+};
 
 interface EditUserProps extends UseBooleanType {
   data: UserSchemaType & { id: string };

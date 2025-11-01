@@ -12,17 +12,13 @@ import { getRoleSchema, RoleSchemaType } from "@/schema/RoleSchema";
 
 interface RoleFormProps {
   onClose: any;
-  componentFor?: "update" | "create";
+  componentFor?: "update" | "create" | "view";
   defaultValue?: RoleSchemaType & { id: string };
 }
 
 type PermissionAction = "view" | "create" | "update" | "delete";
 
-const RoleForm = ({
-  onClose,
-  defaultValue,
-  componentFor = "create",
-}: RoleFormProps) => {
+const RoleForm = ({ onClose, defaultValue, componentFor = "create" }: RoleFormProps) => {
   // -------------------------------------
   // Hooks
   // -------------------------------------
@@ -110,7 +106,7 @@ const RoleForm = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="py-4 space-y-6">
-          <ZInput control={form.control} {...fields} />
+          <ZInput control={form.control} disabled={componentFor === "view"} {...fields} />
         </div>
 
         <div>
@@ -119,9 +115,7 @@ const RoleForm = ({
               <div className="flex text-xs font-medium">
                 <div className="flex-[2] text-muted-foreground">Modules</div>
                 {["View", "Create", "Update", "Delete"].map((label) => (
-                  <div className="text-center flex-1 text-muted-foreground">
-                    {label}
-                  </div>
+                  <div className="text-center flex-1 text-muted-foreground">{label}</div>
                 ))}
               </div>
 
@@ -132,30 +126,24 @@ const RoleForm = ({
 
                 return (
                   <div className="flex flex-col gap-4">
-                    <div className="text-xs font-medium text-muted-foreground">
-                      {section.label}
-                    </div>
+                    <div className="text-xs font-medium text-muted-foreground">{section.label}</div>
 
                     {modules.map((module) => (
-                      <div
-                        key={module.key}
-                        className="flex text-xs font-medium"
-                      >
+                      <div key={module.key} className="flex text-xs font-medium">
                         <div className="flex-[2] pl-4">{module.label}</div>
 
-                        {["View", "Create", "Update", "Delete"].map(
-                          (action) => (
-                            <div className="text-center flex-1">
-                              {module.modules.includes(action) && (
-                                <ZCheckbox
-                                  control={form.control}
-                                  action={action as PermissionAction}
-                                  name={`roles.${section.key}.${module.key}`}
-                                />
-                              )}
-                            </div>
-                          )
-                        )}
+                        {["View", "Create", "Update", "Delete"].map((action) => (
+                          <div className="text-center flex-1">
+                            {module.modules.includes(action) && (
+                              <ZCheckbox
+                                disabled={componentFor === "view"}
+                                control={form.control}
+                                action={action as PermissionAction}
+                                name={`roles.${section.key}.${module.key}`}
+                              />
+                            )}
+                          </div>
+                        ))}
                       </div>
                     ))}
                   </div>
@@ -167,14 +155,16 @@ const RoleForm = ({
           </ZBase>
         </div>
 
-        <DialogFooter className="gap-2 py-8">
-          <Button type="reset" variant={"outline"} onClick={onClose}>
-            Close
-          </Button>
-          <Button loading={loading} variant={"default"} type="submit">
-            {componentFor === "update" ? "Update" : "Create"} Role
-          </Button>
-        </DialogFooter>
+        {componentFor !== "view" && (
+          <DialogFooter className="gap-2 py-8">
+            <Button type="reset" variant={"outline"} onClick={onClose}>
+              Close
+            </Button>
+            <Button loading={loading} variant={"default"} type="submit">
+              {componentFor === "update" ? "Update" : "Create"} Role
+            </Button>
+          </DialogFooter>
+        )}
       </form>
     </Form>
   );
@@ -198,8 +188,7 @@ const roles_fields: fieldType = {
   name: "roles",
   label: "Roles",
   placeholder: "Roles",
-  description:
-    "Select the modules for the role. e.g., 'Overview, Management, Settings'.",
+  description: "Select the modules for the role. e.g., 'Overview, Management, Settings'.",
 };
 
 export default RoleForm;

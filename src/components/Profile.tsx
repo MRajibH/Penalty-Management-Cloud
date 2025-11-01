@@ -12,7 +12,7 @@ import { PiCaretUpDownBold } from "react-icons/pi";
 import { Settings2, User } from "lucide-react";
 import { FiLogOut } from "react-icons/fi";
 import { cn } from "@/lib/utils";
-import { useAuthContext } from "@/context/";
+import { useAuthContext, useDataContext } from "@/context/";
 import { Link } from "react-router-dom";
 
 interface ProfileProps {
@@ -21,7 +21,9 @@ interface ProfileProps {
 }
 
 const Profile = ({ className, iconOnly = false }: ProfileProps) => {
-  const { SignOut } = useAuthContext();
+  const { roleMapped } = useDataContext();
+  const { currentUser, SignOut } = useAuthContext();
+  const roleName = currentUser?.role_id ? roleMapped[currentUser?.role_id]?.role_name : "";
 
   return (
     <div className={cn("", className)}>
@@ -30,10 +32,7 @@ const Profile = ({ className, iconOnly = false }: ProfileProps) => {
           <div className="cursor-pointer">
             <div className="p-1 rounded-md flex items-center gap-3">
               <Avatar className="w-9 h-9">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
+                <AvatarImage src={currentUser?.photoURL} alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
 
@@ -41,7 +40,10 @@ const Profile = ({ className, iconOnly = false }: ProfileProps) => {
                 <>
                   <div className="w-full">
                     <h3 className="text-xs font-bold">Brotecs</h3>
-                    <p className="text-xs text-gray-500">Admin | Devsecops</p>
+                    {/* one line overflow ellipsis */}
+                    <p className="text-xs text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap max-w-[160px]">
+                      {currentUser?.displayName} | {roleName}
+                    </p>
                   </div>
 
                   <div>
@@ -54,6 +56,9 @@ const Profile = ({ className, iconOnly = false }: ProfileProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <p className="text-xs text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px] px-2 ">
+            {currentUser?.displayName} | {roleName}
+          </p>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <Link to={"/app/profile"}>

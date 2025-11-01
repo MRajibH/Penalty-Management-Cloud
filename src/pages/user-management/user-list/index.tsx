@@ -1,12 +1,14 @@
 import { DataTable } from "@/components/data-table/DataTable";
 import { columns, CreateUser } from "./utils";
-import { useAuthContext, useDataContext } from "@/context";
+import { useDataContext } from "@/context";
 
 const UserList = () => {
-  const { currentUser } = useAuthContext();
-  const { users } = useDataContext();
+  const { users, userPermissions } = useDataContext();
 
   let elements = [<CreateUser />];
+  if (!userPermissions?.management?.users_management.includes("create")) {
+    elements = [];
+  }
 
   return <DataTable data={users} columns={columns} elements={elements} />;
 };
