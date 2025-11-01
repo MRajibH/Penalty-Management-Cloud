@@ -1,3 +1,4 @@
+import { RolePermissions } from "@/context/data-context/types";
 import { z } from "zod";
 
 // Define the schema
@@ -39,6 +40,8 @@ const defaultValue = {
     },
   },
 };
+
+export const defaultRole = defaultValue.roles as RolePermissions;
 
 export type RoleSchemaType = z.infer<typeof schema>;
 

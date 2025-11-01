@@ -1,8 +1,4 @@
-import {
-  CreateDocument,
-  CreateFirebaseUser,
-  UpdateDocument,
-} from "@/common/helper";
+import { CreateDocument, CreateFirebaseUser, UpdateDocument } from "@/common/helper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -12,7 +8,7 @@ import { ZSelectListType } from "@/components/z-forms/types";
 import ZBase from "@/components/z-forms/ZBase";
 import ZInput from "@/components/z-forms/ZInput";
 import ZSelect from "@/components/z-forms/ZSelect";
-import { useDataContext } from "@/context";
+import { useAuthContext, useDataContext } from "@/context";
 import { userRef } from "@/db/firebase.db";
 import useForm from "@/hooks/use-form";
 import { useToast } from "@/hooks/use-toast";
@@ -26,16 +22,13 @@ interface UserFormProps {
   defaultValue?: UserSchemaType & { id: string };
 }
 
-const UserForm = ({
-  onClose,
-  defaultValue,
-  componentFor = "create",
-}: UserFormProps) => {
+const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormProps) => {
   // -------------------------------------
   // Hooks
   // -------------------------------------
   const { toast } = useToast();
   const { roles } = useDataContext();
+  const { currentUser } = useAuthContext();
 
   const form = useForm<UserSchemaType>(getUserSchema(defaultValue));
   const loading = form.formState.isSubmitting;
@@ -44,26 +37,46 @@ const UserForm = ({
   // Functions
   // -------------------------------------
   const onSubmit = async (data: UserSchemaType) => {
-    // for creating
+    if (!currentUser) {
+      toast({
+        title: "Please login to continue",
+        description: "You are not logged in",
+      });
+      return;
+    }
+
     try {
+      //--------------------------------------------------------------------------------------------
+      /*
+       ** Create User
+       */
+      //--------------------------------------------------------------------------------------------
       if (componentFor === "create") {
-        const auth_id = await CreateFirebaseUser(data.email, data.password);
+        // create firebase user
+        const auth_id = await CreateFirebaseUser(currentUser.uid, data.email, data.password);
+
+        // create user in database
         await CreateDocument({ ref: userRef, data: { ...data, auth_id } });
       }
-      // for updating
+
+      //--------------------------------------------------------------------------------------------
+      /*
+       ** Update User
+       */
+      //--------------------------------------------------------------------------------------------
       else if (componentFor === "update" && defaultValue?.id) {
         const { id } = defaultValue;
         await UpdateDocument({ ref: userRef, docId: id, data });
       }
+
+      //--------------------------------------------------------------------------------------------
       onClose();
     } catch (error: any) {
       toast({
         title: "Something went wrong",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(error?.message || error, null, 2)}
-            </code>
+            <code className="text-white">{JSON.stringify(error?.message || error, null, 2)}</code>
           </pre>
         ),
       });
@@ -101,24 +114,13 @@ const UserForm = ({
 
               case "password":
                 return (
-                  <ZInput
-                    control={form.control}
-                    inputProps={{ type: "password" }}
-                    {...props}
-                  />
+                  <ZInput control={form.control} inputProps={{ type: "password" }} {...props} />
                 );
 
               // ***
               // Select fields
               case "select":
-                return (
-                  <ZSelect
-                    form={form}
-                    formKey="role_id"
-                    options={options}
-                    {...props}
-                  />
-                );
+                return <ZSelect form={form} formKey="role_id" options={options} {...props} />;
             }
           })}
         </div>
@@ -132,10 +134,7 @@ const UserForm = ({
               const isSelected = selectedAvatar === src;
 
               return (
-                <div
-                  key={index}
-                  className="col-span-1 flex justify-center relative "
-                >
+                <div key={index} className="col-span-1 flex justify-center relative ">
                   <Avatar
                     className={cn(
                       "w-14 h-14 cursor-pointer transition-all duration-200",
@@ -192,8 +191,7 @@ const fields: fieldType[] = [
     label: "Email",
     inputType: "text",
     placeholder: "john.doe@example.com",
-    description:
-      "Enter the employee's official email address, e.g., 'john.doe@example.com'.",
+    description: "Enter the employee's official email address, e.g., 'john.doe@example.com'.",
   },
   {
     name: "password",

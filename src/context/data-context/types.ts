@@ -5,8 +5,18 @@
 type PermissionAction = "view" | "create" | "update" | "delete";
 
 export type RolePermissions = {
-  [section: string]: {
-    [module: string]: PermissionAction[];
+  overview: {
+    dashboard: PermissionAction[];
+    penalties: PermissionAction[];
+  };
+  management: {
+    users_management: PermissionAction[];
+    employee_management: PermissionAction[];
+    manage_constitution: PermissionAction[];
+  };
+  settings: {
+    app_logs: PermissionAction[];
+    app_settings: PermissionAction[];
   };
 };
 

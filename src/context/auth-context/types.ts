@@ -11,6 +11,7 @@ export type CurrentUserType = {
   emailVerified: boolean;
   photoURL: string;
   providerId: string;
+  role_id: string;
 };
 
 export interface AuthContextType {

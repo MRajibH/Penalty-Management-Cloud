@@ -10,12 +10,14 @@ type links1 = {
   title: string;
   label?: string;
   icon: LucideIcon;
+  hasPermission?: boolean;
   variant: "default" | "ghost";
 };
 
 type links2 = {
   type: "label";
   title: string;
+  hasPermission?: boolean;
 };
 
 interface NavProps {
@@ -30,21 +32,19 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
   return (
     <div
       data-collapsed={isCollapsed}
-      className={cn(
-        "group flex-1 flex flex-col gap-4 py-2 data-[collapsed=true]:py-2",
-        className
-      )}
+      className={cn("group flex-1 flex flex-col gap-4 py-2 data-[collapsed=true]:py-2", className)}
     >
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {links.map((link, index) => {
+          if (!link.hasPermission) {
+            return <></>;
+          }
+
           if (link.type === "label") {
             if (isCollapsed) return <></>;
 
             return (
-              <h6
-                key={index}
-                className="text-xs font-bold text-gray-400 px-1 pt-2 pb-1"
-              >
+              <h6 key={index} className="text-xs font-bold text-gray-400 px-1 pt-2 pb-1">
                 {link.title}
               </h6>
             );
@@ -72,11 +72,7 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
               </TooltipTrigger>
               <TooltipContent side="right" className="flex items-center gap-4">
                 {link.title}
-                {link.label && (
-                  <span className="ml-auto text-muted-foreground">
-                    {link.label}
-                  </span>
-                )}
+                {link.label && <span className="ml-auto text-muted-foreground">{link.label}</span>}
               </TooltipContent>
             </Tooltip>
           ) : (
@@ -96,8 +92,7 @@ export function Nav({ links, className, isCollapsed }: NavProps) {
                 <span
                   className={cn(
                     "ml-auto",
-                    link.variant === "default" &&
-                      "text-background dark:text-white"
+                    link.variant === "default" && "text-background dark:text-white"
                   )}
                 >
                   {link.label}

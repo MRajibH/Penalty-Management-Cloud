@@ -1,14 +1,9 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { SubmitSignIn, SubmitSignOut } from "./functions";
 import { AuthContextType, CurrentUserType, SignInAugument } from "./types";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import Loading from "@/components/Loading";
+import { getUserByAuthId } from "@/common/helper";
 
 export const AuthContext = createContext({} as AuthContextType);
 export const useAuthContext = () => useContext(AuthContext);
@@ -28,9 +23,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const auth = getAuth();
     // setLoading(true);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        const { role_id } = await getUserByAuthId(user.uid);
         setCurrentUser({
+          role_id,
           uid: user.uid,
           email: user.email || "",
           providerId: user.providerId,

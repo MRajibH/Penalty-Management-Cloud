@@ -2,17 +2,9 @@ import { cn } from "@/lib/utils";
 import { Nav } from "./Nav";
 import Profile from "./Profile";
 import { Separator } from "./ui/separator";
-import {
-  AlertCircle,
-  BookOpen,
-  FileText,
-  Home,
-  Settings,
-  Settings2,
-  ShieldAlert,
-  Users2,
-} from "lucide-react";
-import { useAuthContext } from "@/context";
+import { BookOpen, FileText, Home, Settings2, ShieldAlert, Users2 } from "lucide-react";
+import { useAuthContext, useDataContext } from "@/context";
+import { defaultRole } from "@/schema/RoleSchema";
 interface SidebarProps {
   isCollapsed: boolean;
 }
@@ -21,11 +13,7 @@ export const Logo = ({ className }: { className?: string }) => (
   <span className={cn("w-8 h-8 flex items-center", className)}>
     <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></g>
+      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
       <g id="SVGRepo_iconCarrier">
         {" "}
         <path
@@ -58,21 +46,18 @@ export const Logo = ({ className }: { className?: string }) => (
 );
 
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
+  const { roleMapped } = useDataContext();
   const { currentUser } = useAuthContext();
+
+  const role_id = currentUser?.role_id;
+  const permissions = role_id ? roleMapped[role_id]?.roles : defaultRole;
 
   return (
     <div className="flex flex-col h-full">
-      <div
-        className={cn(
-          "flex items-center h-[52px]",
-          isCollapsed ? "justify-center" : "px-2"
-        )}
-      >
+      <div className={cn("flex items-center h-[52px]", isCollapsed ? "justify-center" : "px-2")}>
         <img src={"/Penalty-Management-Cloud/logo.png"} className="w-8 mx-2" />
         {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
-        {!isCollapsed && (
-          <h3 className="font-bold text-xl">Penalty Management</h3>
-        )}
+        {!isCollapsed && <h3 className="font-bold text-xl">Penalty Management</h3>}
         {/* <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} /> */}
       </div>
 
@@ -85,6 +70,9 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
           {
             type: "label",
             title: "Overview",
+            hasPermission:
+              permissions?.overview?.dashboard.includes("view") ||
+              permissions?.overview?.penalties.includes("view"),
           },
           {
             type: "link",
@@ -93,6 +81,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Home,
             variant: "default",
+            hasPermission: permissions?.overview?.dashboard.includes("view"),
           },
           {
             type: "link",
@@ -101,10 +90,15 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: ShieldAlert,
             variant: "ghost",
+            hasPermission: permissions?.overview?.penalties.includes("view"),
           },
           {
             type: "label",
             title: "Management",
+            hasPermission:
+              permissions?.management?.users_management.includes("view") ||
+              permissions?.management?.employee_management.includes("view") ||
+              permissions?.management?.manage_constitution.includes("view"),
           },
           {
             type: "link",
@@ -113,6 +107,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Users2,
             variant: "ghost",
+            hasPermission: permissions?.management?.users_management.includes("view"),
           },
           {
             type: "link",
@@ -121,6 +116,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Users2,
             variant: "ghost",
+            hasPermission: permissions?.management?.employee_management.includes("view"),
           },
           {
             type: "link",
@@ -129,10 +125,14 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: BookOpen,
             variant: "ghost",
+            hasPermission: permissions?.management?.manage_constitution.includes("view"),
           },
           {
             type: "label",
             title: "Settings",
+            hasPermission:
+              permissions?.settings?.app_logs.includes("view") ||
+              permissions?.settings?.app_settings.includes("view"),
           },
           {
             type: "link",
@@ -141,6 +141,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: FileText,
             variant: "ghost",
+            hasPermission: permissions?.settings?.app_logs.includes("view"),
           },
           {
             type: "link",
@@ -149,6 +150,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
             label: "",
             icon: Settings2,
             variant: "ghost",
+            hasPermission: permissions?.settings?.app_settings.includes("view"),
           },
         ]}
       />
@@ -156,10 +158,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
       {currentUser && (
         <>
           <Separator />
-          <Profile
-            className={`p-3 mx-${isCollapsed ? "auto" : "0"}`}
-            iconOnly={isCollapsed}
-          />
+          <Profile className={`p-3 mx-${isCollapsed ? "auto" : "0"}`} iconOnly={isCollapsed} />
         </>
       )}
     </div>

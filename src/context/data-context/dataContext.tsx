@@ -1,18 +1,6 @@
-import {
-  departmentRef,
-  designationRef,
-  employeeRef,
-  roleRef,
-  userRef,
-} from "@/db/firebase.db";
+import { departmentRef, designationRef, employeeRef, roleRef, userRef } from "@/db/firebase.db";
 import { onSnapshot } from "firebase/firestore";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import {
   DataContextType,
   departmentType,
@@ -62,12 +50,9 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
       setDepartments(getSnapshotData(snapshot));
     });
 
-    const unsubscribeDesignation = onSnapshot(
-      QueryDesignationRef,
-      (snapshot) => {
-        setDesignations(getSnapshotData(snapshot));
-      }
-    );
+    const unsubscribeDesignation = onSnapshot(QueryDesignationRef, (snapshot) => {
+      setDesignations(getSnapshotData(snapshot));
+    });
 
     return () => {
       // ======================================
@@ -89,6 +74,8 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const employeeMapped = employees.reduce(mappedFunc, {} as any);
   const departmentMapped = departments.reduce(mappedFunc, {} as any);
   const designationMapped = designations.reduce(mappedFunc, {} as any);
+
+  console.log(roles);
 
   const value: any = {
     // Collections

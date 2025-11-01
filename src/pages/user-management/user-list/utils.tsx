@@ -16,7 +16,7 @@ import { UserSchemaType } from "@/schema/UserSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useDataContext } from "@/context";
+import { useAuthContext, useDataContext } from "@/context";
 import { Badge } from "@/components/ui/badge";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +31,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { DeleteFirebaseUser } from "@/common/helper";
 
 export const CreateUser = () => {
   const { open, setOpen, onClose } = useBoolean();
@@ -55,14 +56,13 @@ export const CreateUser = () => {
   );
 };
 
-export const columns: ColumnDef<UserSchemaType & { id: string }>[] = [
+export const columns: ColumnDef<UserSchemaType & { id: string; auth_id: string }>[] = [
   {
     id: "select",
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -82,38 +82,27 @@ export const columns: ColumnDef<UserSchemaType & { id: string }>[] = [
   },
   {
     accessorKey: "avatar",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Avatar" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Avatar" />,
     cell: ({ row }) => {
       const avatar: string = row.getValue("avatar") || "";
       return (
         <Avatar className="w-8 h-8">
           <AvatarImage src={avatar} />
-          <AvatarFallback>
-            {avatar.split("/").pop()?.split(".")[0]}
-          </AvatarFallback>
+          <AvatarFallback>{avatar.split("/").pop()?.split(".")[0]}</AvatarFallback>
         </Avatar>
       );
     },
   },
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
     cell: ({ row }) => {
       return (
-        <a
-          href={`mailto:${row.getValue("email")}`}
-          className="hover:underline hover:text-blue-700"
-        >
+        <a href={`mailto:${row.getValue("email")}`} className="hover:underline hover:text-blue-700">
           {row.getValue("email")}
         </a>
       );
@@ -121,28 +110,30 @@ export const columns: ColumnDef<UserSchemaType & { id: string }>[] = [
   },
   {
     accessorKey: "role_id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Role" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
     cell: ({ row }) => {
       const { roleMapped } = useDataContext();
+
       const id: string = row.getValue("role_id");
-      const { role_name } = roleMapped[id];
+      const role_name = roleMapped[id]?.role_name;
       return <Badge variant="outline">{role_name}</Badge>;
     },
   },
   {
     id: "actions",
-    header: ({ column }) => (
-      <DataTableColumnHeader align="center" column={column} title="Action" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
       const EditBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
+      const { currentUser } = useAuthContext();
+
+      const isMySelf = row.original.auth_id === currentUser?.uid;
+      // const isAdmin = currentUser?.role === "admin";
 
       return (
         <div className="flex justify-center">
           <DataTableRowActions
+            disabledDelete={isMySelf}
             onClickEdit={EditBoolean.onOpen}
             onClickDelete={DeleteBoolean.onOpen}
           />
@@ -180,7 +171,7 @@ const EditUser = ({ data, ...boolean }: EditUserProps) => {
 };
 
 interface DeleteUserProps extends UseBooleanType {
-  data: UserSchemaType & { id: string };
+  data: UserSchemaType & { id: string; auth_id: string };
 }
 
 const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
@@ -192,6 +183,10 @@ const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
     const { id } = data;
     try {
       setLoading(true);
+      // delete firebase user
+      await DeleteFirebaseUser(data.auth_id);
+
+      // delete user from database
       await deleteDoc(doc(userRef, id));
       onClose();
     } catch (err: any) {
@@ -199,9 +194,7 @@ const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
         title: "Something went wrong",
         description: (
           <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(err?.message || err, null, 2)}
-            </code>
+            <code className="text-white">{JSON.stringify(err?.message || err, null, 2)}</code>
           </pre>
         ),
       });
