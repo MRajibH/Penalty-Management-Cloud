@@ -4,8 +4,8 @@ import { Button } from "../../components/ui/button";
 import ZInput from "../../components/z-forms/ZInput";
 import useForm from "@/hooks/use-form";
 import ZSelect from "../../components/z-forms/ZSelect";
-import { employeeRef } from "@/db/firebase.db";
-import { UpdateDocument } from "@/common/helper";
+import { employeeRef, penaltyDataRef } from "@/db/firebase.db";
+import { CreateDocument, UpdateDocument } from "@/common/helper";
 import { getPenaltySchema, PenaltySchemaType } from "@/schema/PenaltySchema";
 import { DialogFooter } from "../../components/ui/dialog";
 import { ZSelectListType } from "../../components/z-forms/types";
@@ -23,7 +23,7 @@ export function PenaltyForm({ onClose, defaultValue, componentFor = "create" }: 
   // -------------------------------------
   // Hooks
   // -------------------------------------
-  const { employees } = useDataContext();
+  const { employees, penaltyReasons } = useDataContext();
   const form = useForm<PenaltySchemaType>(getPenaltySchema(defaultValue));
 
   // -------------------------------------
@@ -40,8 +40,7 @@ export function PenaltyForm({ onClose, defaultValue, componentFor = "create" }: 
 
       // for creating
       if (componentFor === "create") {
-        console.log(data);
-        // await CreateDocument({ ref: employeeRef, data });
+        await CreateDocument({ ref: penaltyDataRef, data: { ...data, status: "PENDING" } });
       }
 
       // for updating
@@ -50,41 +49,25 @@ export function PenaltyForm({ onClose, defaultValue, componentFor = "create" }: 
         await UpdateDocument({ ref: employeeRef, docId: id, data });
       }
 
-      // onClose();
+      onClose();
     } finally {
       setLoading(false);
     }
   };
 
-  // const addPenalty = async (newPenalty: Omit<Penalty, "id" | "status">) => {
-  //   try {
-  //     setLoading(true);
-  //     await addDoc(penaltyCollectionRef, {
-  //       ...newPenalty,
-  //       id: Date.now().toString(),
-  //       status: "PENDING",
-  //     });
-  //     onOpen(false);
-  //   } catch (err: any) {
-  //     toast(err?.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   addPenalty({
-  //     ...formData,
-  //     amount: parseFloat(formData.amount),
-  //   });
-  //   setFormData(getInitialValue());
-  // };
-
   // -------------------------------------
   // Variables
   // -------------------------------------
-  const options: ZSelectListType[] = employees.map(({ id, name }) => ({ label: name, value: id }));
+  const employeeOptions: ZSelectListType[] = employees.map(({ id, name, avatar }) => ({
+    avatar,
+    value: id,
+    label: name,
+  }));
+
+  const reasonOptions: ZSelectListType[] = penaltyReasons.map(({ id, reason_name }) => ({
+    value: id,
+    label: reason_name,
+  }));
 
   return (
     <Form {...form}>
@@ -95,27 +78,62 @@ export function PenaltyForm({ onClose, defaultValue, componentFor = "create" }: 
               // ***
               // Input fields
               case "text":
-                return <ZInput control={form.control} inputProps={{ type: "text" }} {...props} />;
+                return (
+                  <ZInput
+                    key={props.name}
+                    control={form.control}
+                    inputProps={{ type: "text" }}
+                    {...props}
+                  />
+                );
 
               // ***
               // Number fields
               case "number":
-                return <ZInput control={form.control} inputProps={{ type: "number" }} {...props} />;
+                return (
+                  <ZInput
+                    key={props.name}
+                    control={form.control}
+                    inputProps={{ type: "number" }}
+                    {...props}
+                  />
+                );
 
               // ***
               // Select fields
               case "select":
-                return <ZSelect form={form} formKey="employee_id" options={options} {...props} />;
+                if (props.name === "employee_id") {
+                  return (
+                    <ZSelect
+                      key={props.name}
+                      form={form}
+                      formKey={props.name}
+                      options={employeeOptions}
+                      {...props}
+                    />
+                  );
+                } else if (props.name === "reason_id") {
+                  return (
+                    <ZSelect
+                      key={props.name}
+                      form={form}
+                      formKey={props.name}
+                      options={reasonOptions}
+                      {...props}
+                    />
+                  );
+                }
+                return null;
 
               // ***
               // Date fields
               case "date":
-                return <ZDateInput form={form} formKey="date" {...props} />;
+                return <ZDateInput key={props.name} form={form} formKey="date" {...props} />;
 
               // ***
               // Input fields
               case "textarea":
-                return <ZTextarea control={form.control} {...props} />;
+                return <ZTextarea key={props.name} control={form.control} {...props} />;
             }
           })}
         </div>
@@ -138,23 +156,23 @@ type fieldType = {
   description: string;
   placeholder: string;
   inputType: "text" | "select" | "number" | "date" | "textarea";
-  name: "employee_id" | "reason" | "amount" | "date" | "description";
+  name: "employee_id" | "reason_id" | "amount" | "date" | "description";
 };
 
 const fields: fieldType[] = [
   {
     name: "employee_id",
     label: "Engineer Name",
-    description: "Enter the name of the engineer to assign the penalty to.",
+    description: "Select the engineer to assign the penalty to.",
     inputType: "select",
-    placeholder: "Enter engineer's name ...",
+    placeholder: "Select Engineer ...",
   },
   {
-    name: "reason",
+    name: "reason_id",
     label: "Reason",
-    description: "Enter the reason for the penalty.",
-    inputType: "text",
-    placeholder: "Enter a reason ...",
+    description: "Select the reason for the penalty.",
+    inputType: "select",
+    placeholder: "Select a reason ...",
   },
   {
     name: "amount",

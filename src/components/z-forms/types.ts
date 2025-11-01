@@ -8,4 +8,5 @@ export type DefaultZFormProps = {
 export type ZSelectListType = {
   label: string;
   value: string;
+  avatar?: string;
 };

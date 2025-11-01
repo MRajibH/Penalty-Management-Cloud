@@ -21,7 +21,7 @@ export function SearchBar({ value, onChange, className }: SearchBarProps) {
           value={value}
           className="bg-white pl-8"
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Search by engineer name or reason..."
+          placeholder="Search by employee name..."
         />
       </div>
     </FormItem>

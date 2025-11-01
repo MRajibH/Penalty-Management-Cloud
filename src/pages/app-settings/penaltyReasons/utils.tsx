@@ -1,44 +1,43 @@
 import { Button } from "@/components/ui/button";
-import useBoolean, { UseBooleanType } from "@/hooks/use-boolean";
 import {
-  SheetTitle,
-  SheetContent,
   Sheet,
-  SheetTrigger,
-  SheetHeader,
+  SheetContent,
   SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Plus } from "lucide-react";
+import useBoolean, { UseBooleanType } from "@/hooks/use-boolean";
 import { Separator } from "@/components/ui/separator";
-import UserForm from "./UserForm";
+import PenaltyReasonForm from "./PenaltyReasonForm";
+import { PenaltyReasonSchemaType } from "@/schema/PenaltyReasonSchema";
 import { ColumnDef } from "@tanstack/react-table";
-import { UserSchemaType } from "@/schema/UserSchema";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table/DataTableColumnHeader";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuthContext, useDataContext } from "@/context";
-import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useDataContext } from "@/context";
 import { DataTableRowActions } from "@/components/data-table/DataTableRowActions";
 import { useToast } from "@/hooks/use-toast";
+import { deleteDoc, doc } from "firebase/firestore";
+import { penaltyReasonRef } from "@/db/firebase.db";
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  Dialog,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { DeleteFirebaseUser } from "@/common/helper";
 
-export const CreateUser = () => {
+export const CreatePenaltyReason = () => {
   const { open, setOpen, onClose } = useBoolean();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button size={"sm"}>
-          Add User
+          Add Penalty Reason
           <Plus />
         </Button>
       </SheetTrigger>
@@ -48,13 +47,13 @@ export const CreateUser = () => {
           <SheetDescription>Create a new user.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
-        <UserForm onClose={onClose} />
+        <PenaltyReasonForm onClose={onClose} />
       </SheetContent>
     </Sheet>
   );
 };
 
-export const columns: ColumnDef<UserSchemaType & { id: string; auth_id: string }>[] = [
+export const columns: ColumnDef<PenaltyReasonSchemaType & { id: string }>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -79,105 +78,42 @@ export const columns: ColumnDef<UserSchemaType & { id: string; auth_id: string }
     enableHiding: false,
   },
   {
-    accessorKey: "avatar",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Avatar" />,
-    cell: ({ row }) => {
-      const avatar: string = row.getValue("avatar") || "";
-      return (
-        <Avatar className="w-9 h-9">
-          <AvatarImage src={avatar} />
-          <AvatarFallback>{avatar.split("/").pop()?.split(".")[0]}</AvatarFallback>
-        </Avatar>
-      );
-    },
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
-    cell: ({ row }) => {
-      return (
-        <a href={`mailto:${row.getValue("email")}`} className="hover:underline hover:text-blue-700">
-          {row.getValue("email")}
-        </a>
-      );
-    },
-  },
-  {
-    accessorKey: "role_id",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
-    cell: ({ row }) => {
-      const { roleMapped } = useDataContext();
-
-      const id: string = row.getValue("role_id");
-      const role_name = roleMapped[id]?.role_name;
-      return <Badge variant="outline">{role_name}</Badge>;
-    },
+    accessorKey: "reason_name",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Reason Name" />,
+    cell: ({ row }) => <div className="w-full">{row.getValue("reason_name")}</div>,
+    enableSorting: true,
+    enableHiding: true,
   },
   {
     id: "actions",
     header: ({ column }) => <DataTableColumnHeader align="center" column={column} title="Action" />,
     cell: ({ row }) => {
       const EditBoolean = useBoolean();
-      const ViewBoolean = useBoolean();
       const DeleteBoolean = useBoolean();
-      const { currentUser } = useAuthContext();
       const { userPermissions } = useDataContext();
 
-      const canUpdate = userPermissions?.management?.users_management.includes("update");
-      const canDelete = userPermissions?.management?.users_management.includes("delete");
-
-      const isMySelf = row.original.auth_id === currentUser?.uid;
-      // const isAdmin = currentUser?.role === "admin";
+      const canUpdate = userPermissions?.settings?.app_settings.includes("update");
+      const canDelete = userPermissions?.settings?.app_settings.includes("delete");
 
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center w-[120px] mx-auto">
           <DataTableRowActions
-            disabledDelete={isMySelf}
-            onClickView={ViewBoolean.onOpen}
             onClickEdit={canUpdate ? EditBoolean.onOpen : undefined}
             onClickDelete={canDelete ? DeleteBoolean.onOpen : undefined}
           />
-          <EditUser data={row.original} {...EditBoolean} />
-          <DeleteUser data={row.original} {...DeleteBoolean} />
-          <ViewUser data={row.original} {...ViewBoolean} />
+          <EditPenaltyReason data={row.original} {...EditBoolean} />
+          <DeletePenaltyReason data={row.original} {...DeleteBoolean} />
         </div>
       );
     },
   },
 ];
 
-interface ViewUserProps extends UseBooleanType {
-  data: UserSchemaType & { id: string };
+interface EditPenaltyReasonProps extends UseBooleanType {
+  data: PenaltyReasonSchemaType & { id: string };
 }
 
-const ViewUser = ({ data, ...boolean }: ViewUserProps) => {
-  const { open, setOpen, onClose } = boolean;
-  return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="lg:min-w-[500px]">
-        <SheetHeader>
-          <SheetTitle>View User</SheetTitle>
-        </SheetHeader>
-        <Separator className="mt-6" />
-        <UserForm
-          onClose={onClose}
-          componentFor={"view"}
-          defaultValue={data as unknown as UserSchemaType & { id: string; auth_id: string }}
-        />
-      </SheetContent>
-    </Sheet>
-  );
-};
-
-interface EditUserProps extends UseBooleanType {
-  data: UserSchemaType & { id: string };
-}
-
-const EditUser = ({ data, ...boolean }: EditUserProps) => {
+const EditPenaltyReason = ({ data, ...boolean }: EditPenaltyReasonProps) => {
   const { open, setOpen, onClose } = boolean;
 
   return (
@@ -188,21 +124,21 @@ const EditUser = ({ data, ...boolean }: EditUserProps) => {
           <SheetDescription>Update the Employee data.</SheetDescription>
         </SheetHeader>
         <Separator className="mt-6" />
-        <UserForm
+        <PenaltyReasonForm
           onClose={onClose}
           componentFor={"update"}
-          defaultValue={data as unknown as UserSchemaType & { id: string; auth_id: string }}
+          defaultValue={data as unknown as PenaltyReasonSchemaType & { id: string }}
         />
       </SheetContent>
     </Sheet>
   );
 };
 
-interface DeleteUserProps extends UseBooleanType {
-  data: UserSchemaType & { id: string; auth_id: string };
+interface DeletePenaltyReasonProps extends UseBooleanType {
+  data: PenaltyReasonSchemaType & { id: string };
 }
 
-const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
+const DeletePenaltyReason = ({ data, ...boolean }: DeletePenaltyReasonProps) => {
   const { toast } = useToast();
   const { open, setOpen, onClose } = boolean;
   const [loading, setLoading] = useState(false);
@@ -211,7 +147,7 @@ const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
     const { id } = data;
     try {
       setLoading(true);
-      await DeleteFirebaseUser(data.auth_id, id);
+      await deleteDoc(doc(penaltyReasonRef, id));
       onClose();
     } catch (err: any) {
       toast({
@@ -231,9 +167,9 @@ const DeleteUser = ({ data, ...boolean }: DeleteUserProps) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px] pb-4">
         <DialogHeader>
-          <DialogTitle>Delete User Confirmation</DialogTitle>
+          <DialogTitle>Delete Confirmation</DialogTitle>
           <DialogDescription className="py-2">
-            Are you sure you want to delete this User?
+            Are you sure you want to delete this Penalty Reason?
           </DialogDescription>
         </DialogHeader>
 

@@ -1,20 +1,16 @@
+import PenaltyReasons from "./penaltyReasons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Department from "../employee-management/department";
-import Designation from "../employee-management/designation";
 
 const AppSettings = () => {
   return (
     <div className=" p-6 mx-auto grid gap-8">
-      <Tabs defaultValue="designation" className="">
-        <TabsList className="grid w-[400px] grid-cols-2 ">
-          <TabsTrigger value="designation">Manage Designations</TabsTrigger>
-          <TabsTrigger value="department">Manage Departments</TabsTrigger>
+      <Tabs defaultValue="penaltyReasons" className="">
+        <TabsList className="grid w-[400px] grid-cols-2">
+          <TabsTrigger value="penaltyReasons">Penalty Reasons</TabsTrigger>
+          <TabsTrigger value="uiSettings">UI Settings</TabsTrigger>
         </TabsList>
-        <TabsContent value="designation" className="mt-8">
-          <Designation />
-        </TabsContent>
-        <TabsContent value="department" className="mt-8">
-          <Department />
+        <TabsContent value="penaltyReasons" className="mt-8">
+          <PenaltyReasons />
         </TabsContent>
       </Tabs>
     </div>

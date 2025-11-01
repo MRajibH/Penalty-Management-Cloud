@@ -67,18 +67,50 @@ export type designationType = {
   designation_name: string;
 };
 
+export type penaltyReasonType = {
+  id: string;
+  createdAt: number;
+  modifiedAt: number;
+  reason_name: string;
+};
+
+export type penaltyStatusType = "PENDING" | "PAID" | "DISPUTED";
+
+export type penaltyDataType = {
+  id: string;
+  date: string;
+  amount: number;
+  reason_id: string;
+  createdAt: number;
+  modifiedAt: number;
+  employee_id: string;
+  description?: string;
+  status: penaltyStatusType;
+};
+
+export type ProcessedPenaltyDataType = {
+  employee: employeesType;
+  designation: designationType;
+  department: departmentType;
+  penalties: (penaltyDataType & { reason: penaltyReasonType })[];
+};
+
 export interface DataContextType {
   users: userType[];
   roles: roleType[];
   employees: employeesType[];
   departments: departmentType[];
+  penaltyData: penaltyDataType[];
   designations: designationType[];
+  penaltyReasons: penaltyReasonType[];
 
   userMapped: Record<string, userType>;
   roleMapped: Record<string, roleType>;
   employeeMapped: Record<string, employeesType>;
   departmentMapped: Record<string, departmentType>;
+  penaltyDataMapped: Record<string, penaltyDataType>;
   designationMapped: Record<string, designationType>;
+  penaltyReasonMapped: Record<string, penaltyReasonType>;
 
   userPermissions: RolePermissions;
 }

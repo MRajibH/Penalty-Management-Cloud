@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { DefaultZFormProps, ZSelectListType } from "./types";
 import { UseFormReturn } from "react-hook-form";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface ZSelect extends DefaultZFormProps {
   formKey: string;
@@ -40,7 +41,7 @@ const ZSelect = ({ form, formKey, options, disabled, ...formData }: ZSelect) => 
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
-          <Popover open={open} onOpenChange={setOpen}>
+          <Popover open={open} onOpenChange={setOpen} modal={true}>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
@@ -62,7 +63,7 @@ const ZSelect = ({ form, formKey, options, disabled, ...formData }: ZSelect) => 
                 <CommandList>
                   <CommandEmpty>No {label} found.</CommandEmpty>
                   <CommandGroup>
-                    {options.map(({ label, value }) => (
+                    {options.map(({ label, value, avatar }) => (
                       <CommandItem
                         key={value}
                         value={label}
@@ -71,7 +72,17 @@ const ZSelect = ({ form, formKey, options, disabled, ...formData }: ZSelect) => 
                           setOpen(false);
                         }}
                       >
-                        {label}
+                        <div className="flex items-center gap-2">
+                          {avatar && (
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src={avatar} />
+                              <AvatarFallback>
+                                {avatar.split("/").pop()?.split(".")[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                          )}
+                          <span className="font-medium">{label}</span>
+                        </div>
                         <Check
                           className={cn(
                             "ml-auto",

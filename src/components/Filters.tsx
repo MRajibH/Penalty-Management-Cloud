@@ -27,7 +27,7 @@ const departments: Department[] = ["Frontend", "Backend", "DevSecOps", "QA", "Mo
 
 export function Filters({ filters, onFilterChange, className }: FiltersProps) {
   return (
-    <div className={cn("bg-white  rounded-lg space-y-4", className)}>
+    <div className={cn("rounded-lg space-y-4", className)}>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <FormItem>
           <Label className="px-1">Department</Label>
@@ -100,6 +100,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
               <Calendar
                 mode="single"
                 onSelect={(date) => {
+                  if (!date) return;
                   const year = date?.getFullYear();
                   const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
                   const day = String(date?.getDate()).padStart(2, "0"); // Day of the month
@@ -136,6 +137,7 @@ export function Filters({ filters, onFilterChange, className }: FiltersProps) {
               <Calendar
                 mode="single"
                 onSelect={(date) => {
+                  if (!date) return;
                   const year = date?.getFullYear();
                   const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
                   const day = String(date?.getDate()).padStart(2, "0"); // Day of the month

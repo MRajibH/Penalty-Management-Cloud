@@ -1,35 +1,38 @@
-import {
-  Calendar,
-  AlertCircle,
-  Briefcase,
-  CheckCheck,
-  OctagonAlert,
-  CircleOff,
-} from "lucide-react";
-import { Penalty } from "../types";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
-import { useAuthContext } from "@/context";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { ProcessedPenaltyDataType } from "@/context/data-context/types";
+import { Card, CardFooter, CardHeader } from "./ui/card";
+import { useDataContext } from "@/context";
+import { Badge } from "./ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Separator } from "./ui/separator";
+import { SearchFilters } from "@/types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
+import useBoolean from "@/hooks/use-boolean";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { doc, updateDoc } from "firebase/firestore";
+import { penaltyDataRef } from "@/db/firebase.db";
 
 interface PenaltyCardProps {
-  penalty: Penalty;
-  onStatusChange: (id: string, status: Penalty["status"]) => void;
+  filters: SearchFilters;
+  penalty: ProcessedPenaltyDataType;
 }
 
 export const BDT = ({ className = "" }) => (
   <svg
     className={cn("", className)}
     xmlns="http://www.w3.org/2000/svg"
-    height="20px"
-    width="20px"
+    height="16px"
+    width="16px"
     viewBox="0 0 24 24"
   >
     <path
@@ -39,38 +42,55 @@ export const BDT = ({ className = "" }) => (
   </svg>
 );
 
-export function PenaltyCard({ penalty, onStatusChange }: PenaltyCardProps) {
-  const { currentUser } = useAuthContext();
+export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const { userPermissions } = useDataContext();
+  const [dialogState, setDialogState] = useState<{
+    open: boolean;
+    type: "markAllAsPaid" | "disputeAllPenalty" | null;
+  }>({
+    open: false,
+    type: null,
+  });
 
-  const getStatusBgColor = (status: Penalty["status"]) => {
-    switch (status) {
-      case "PAID": {
-        return "bg-emerald-100 text-emerald-800";
-      }
+  // Handle open and close dialogs
+  const canUpdatePenalty = userPermissions?.management?.employee_management.includes("update");
+  const penalties = penalty.penalties;
 
-      case "PENDING": {
-        return "bg-amber-100 text-amber-800";
-      }
+  const totalPendingAmount = penalties.reduce((acc, penalty) => {
+    const amount = penalty.status === "PENDING" ? penalty.amount : 0;
+    return acc + Number(amount);
+  }, 0);
 
-      case "DISPUTED": {
-        return "bg-red-100 text-red-800";
-      }
-    }
-  };
+  const totalPaidAmount = penalties.reduce((acc, penalty) => {
+    const amount = penalty.status === "PAID" ? penalty.amount : 0;
+    return acc + Number(amount);
+  }, 0);
 
-  const getStatusIcon = (status: Penalty["status"]) => {
-    switch (status) {
-      case "PAID": {
-        return <CheckCheck className="w-4 h-4" />;
-      }
+  const showTotalPaidAmount = filters.status === "ALL" || filters.status === "PAID";
+  const showTotalPendingAmount = filters.status === "ALL" || filters.status === "PENDING";
 
-      case "PENDING": {
-        return <OctagonAlert className="w-4 h-4" />;
-      }
+  const handleClick = async (status: "DISPUTED" | "PAID") => {
+    try {
+      setLoading(true);
 
-      case "DISPUTED": {
-        return <CircleOff className="w-3.5 h-3.5" />;
-      }
+      const promises = penalties
+        .filter((penalty) => penalty.status === "PENDING")
+        .map(async (penalty) => {
+          return updateDoc(doc(penaltyDataRef, penalty.id), {
+            status,
+          });
+        });
+
+      await Promise.all(promises);
+      setDialogState({ open: false, type: null });
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,64 +99,218 @@ export function PenaltyCard({ penalty, onStatusChange }: PenaltyCardProps) {
       <Card>
         <CardHeader>
           <div className="flex justify-between">
-            <div className="grid gap-1">
-              <CardTitle>{penalty.engineerName}</CardTitle>
-              <CardDescription className="flex items-center">
-                <Briefcase className="w-4 h-4 mr-1" />
-                <span>{penalty.department}</span>
-              </CardDescription>
-            </div>
-            <div>
-              <span
-                className={cn(
-                  "flex items-center gap-2 text-xs font-bold bg-slate-300 pl-2.5 pr-3.5 py-2 rounded-full",
-                  getStatusBgColor(penalty.status)
-                )}
-              >
-                {getStatusIcon(penalty.status)}
-                {penalty.status}
-              </span>
+            <div className="flex items-center gap-3">
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={penalty.employee.avatar} />
+                <AvatarFallback>{penalty.employee.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col gap-1">
+                <div className="px-1 font-medium">{penalty.employee.name}</div>
+                <div className="flex flex-col items-center">
+                  <Badge variant="outline">{penalty.designation.designation_name}</Badge>
+                </div>
+              </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-2 rounded-md border p-4">
-            <div className="flex items-center text-gray-600">
-              <AlertCircle className="w-4 h-4 mr-2" />
-              <span>{penalty.reason}</span>
-            </div>
 
-            <div className="flex items-center text-gray-600">
-              <BDT />
-              <span>{penalty.amount.toFixed(2)}</span>
-            </div>
+        <div className="px-3 space-x-2 h-10">
+          {showTotalPendingAmount && (
+            <Badge variant="outline">Pending : BDT {totalPendingAmount}</Badge>
+          )}
+          {showTotalPaidAmount && <Badge variant="outline">Paid : {totalPaidAmount}</Badge>}
+        </div>
 
-            <div className="flex items-center text-gray-600">
-              <Calendar className="w-4 h-4 mr-2" />
-              <span>{new Date(penalty.date).toDateString()}</span>
-            </div>
-          </div>
-        </CardContent>
+        <Separator />
+        <PenaltyList penalties={penalties} />
+        <Separator className="mb-6" />
+
         <CardFooter className="gap-4">
-          {penalty.status === "PENDING" && currentUser && (
+          {canUpdatePenalty && (
             <>
               <Button
                 variant={"outline"}
                 className="w-full"
-                onClick={() => onStatusChange(penalty.id, "DISPUTED")}
+                onClick={() => setDialogState({ open: true, type: "disputeAllPenalty" })}
               >
-                Dispute
+                Dispute all
               </Button>
               <Button
                 className="w-full"
-                onClick={() => onStatusChange(penalty.id, "PAID")}
+                onClick={() => setDialogState({ open: true, type: "markAllAsPaid" })}
               >
-                Mark as Paid
+                Mark all as Paid
               </Button>
             </>
           )}
         </CardFooter>
       </Card>
+
+      <Dialog
+        open={dialogState.open}
+        onOpenChange={(open) => setDialogState({ ...dialogState, open })}
+      >
+        <DialogContent className="sm:max-w-[425px] pb-4">
+          <DialogHeader>
+            <DialogTitle>Update Penalty Status</DialogTitle>
+            <DialogDescription className="py-2">
+              Are you sure you want to{" "}
+              {dialogState.type === "markAllAsPaid" ? "mark all as paid" : "dispute all penalty"}?
+            </DialogDescription>
+          </DialogHeader>
+
+          <Separator />
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant={"outline"}
+              onClick={() => setDialogState({ ...dialogState, open: false })}
+            >
+              Cancel
+            </Button>
+            <Button
+              loading={loading}
+              onClick={() =>
+                handleClick(dialogState.type === "markAllAsPaid" ? "PAID" : "DISPUTED")
+              }
+            >
+              {dialogState.type === "markAllAsPaid" ? "Mark all as Paid" : "Dispute all"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
+
+const PenaltyList = ({ penalties }: { penalties: ProcessedPenaltyDataType["penalties"] }) => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const { open, setOpen, onOpen, onClose } = useBoolean();
+  const [selectedPenalty, setSelectedPenalty] = useState<
+    ProcessedPenaltyDataType["penalties"][0] | null
+  >(null);
+
+  const handleClick = async (status: "DISPUTED" | "PAID") => {
+    try {
+      setLoading(true);
+      await updateDoc(doc(penaltyDataRef, selectedPenalty?.id), {
+        status,
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePenaltyClick = (penalty: ProcessedPenaltyDataType["penalties"][0]) => {
+    setSelectedPenalty(penalty);
+    onOpen();
+  };
+
+  return (
+    <div className="py-4 space-y-2 h-56 overflow-y-auto">
+      {penalties.map((penalty, index) => {
+        const date = new Date(penalty.date);
+        const formattedDate = date
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+          })
+          .replace(" ", ", ");
+
+        const isPaid = penalty.status === "PAID";
+        const isDisputed = penalty.status === "DISPUTED";
+        const paidBadgeColor = "border-emerald-500 text-emerald-800 bg-emerald-50";
+        const disputedBadgeColor = "border-red-500 text-red-800 bg-red-50";
+
+        return (
+          <>
+            {index > 0 && <div className="border-dashed border-b border-gray-200" />}
+            <div
+              key={index}
+              className="px-4 flex gap-3 items-center text-gray-800 text-[13px] font-medium"
+            >
+              <span>{formattedDate}</span>
+              <div>
+                <Badge
+                  variant="outline"
+                  className={isPaid ? paidBadgeColor : isDisputed ? disputedBadgeColor : ""}
+                >
+                  BDT {penalty.amount}
+                </Badge>
+              </div>
+
+              {penalty.status === "PENDING" ? (
+                <span
+                  className="flex-1 text-gray-600 hover:underline cursor-pointer hover:text-primary"
+                  onClick={() => handlePenaltyClick(penalty)}
+                >
+                  {penalty.reason.reason_name}
+                </span>
+              ) : (
+                <span className="flex-1 text-gray-600">{penalty.reason.reason_name}</span>
+              )}
+            </div>
+          </>
+        );
+      })}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-[425px] pb-4">
+          <DialogHeader>
+            <DialogTitle>Update Penalty Status</DialogTitle>
+            <DialogDescription className="py-2">
+              Click following options to update the penalty status.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Separator />
+
+          <div className="space-y-4">
+            {/* Penalty info */}
+            <div className="flex flex-col gap-2 text-xs font-medium">
+              <div className="flex items-center gap-2">
+                <span>Date: {new Date(selectedPenalty?.date || "").toLocaleDateString()}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span>Amount: BDT {selectedPenalty?.amount}</span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span>Reason: {selectedPenalty?.reason.reason_name}</span>
+              </div>
+
+              {selectedPenalty?.description && (
+                <div className="flex items-center gap-2">
+                  <span>Description: {selectedPenalty?.description}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <Separator />
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant={"outline"}
+              className="text-red-600 hover:text-red-600 hover:bg-red-50 border-red-500"
+              loading={loading}
+              onClick={() => handleClick("DISPUTED")}
+            >
+              Dispute
+            </Button>
+            <Button type="submit" loading={loading} onClick={() => handleClick("PAID")}>
+              Mark as Paid
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};

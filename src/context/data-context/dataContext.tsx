@@ -1,4 +1,12 @@
-import { departmentRef, designationRef, employeeRef, roleRef, userRef } from "@/db/firebase.db";
+import {
+  departmentRef,
+  designationRef,
+  employeeRef,
+  penaltyDataRef,
+  penaltyReasonRef,
+  roleRef,
+  userRef,
+} from "@/db/firebase.db";
 import { onSnapshot } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import {
@@ -6,12 +14,13 @@ import {
   departmentType,
   designationType,
   employeesType,
+  penaltyDataType,
+  penaltyReasonType,
   roleType,
   userType,
 } from "./types";
 import { getQueryRef, getSnapshotData, mappedFunc } from "./functions";
 import { useAuthContext } from "../auth-context/authContext";
-import { defaultRole } from "@/schema/RoleSchema";
 import Loading from "@/components/Loading";
 
 export const DataContext = createContext({} as DataContextType);
@@ -24,7 +33,9 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [roles, setRoles] = useState<roleType[]>([]);
   const [employees, setEmployees] = useState<employeesType[]>([]);
   const [departments, setDepartments] = useState<departmentType[]>([]);
+  const [penaltyData, setPenaltyData] = useState<penaltyDataType[]>([]);
   const [designations, setDesignations] = useState<designationType[]>([]);
+  const [penaltyReasons, setPenaltyReasons] = useState<penaltyReasonType[]>([]);
 
   useEffect(() => {
     // =========================
@@ -34,6 +45,8 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     const QueryRoleRef = getQueryRef(roleRef);
     const QueryEmployeeRef = getQueryRef(employeeRef);
     const QueryDepartmentRef = getQueryRef(departmentRef);
+    const QueryPenaltyDataRef = getQueryRef(penaltyDataRef);
+    const QueryPenaltyReasonRef = getQueryRef(penaltyReasonRef);
     const QueryDesignationRef = getQueryRef(designationRef, "order", "desc");
 
     // ===============================
@@ -59,6 +72,14 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
       setDesignations(getSnapshotData(snapshot));
     });
 
+    const unsubscribePenaltyData = onSnapshot(QueryPenaltyDataRef, (snapshot) => {
+      setPenaltyData(getSnapshotData(snapshot));
+    });
+
+    const unsubscribePenaltyReason = onSnapshot(QueryPenaltyReasonRef, (snapshot) => {
+      setPenaltyReasons(getSnapshotData(snapshot));
+    });
+
     return () => {
       // ======================================
       // UnSubcribe all collections on unmount
@@ -68,6 +89,8 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
       unsubscribeEmployee();
       unsubscribeDepartment();
       unsubscribeDesignation();
+      unsubscribePenaltyData();
+      unsubscribePenaltyReason();
     };
   }, []);
 
@@ -78,7 +101,9 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const roleMapped = roles.reduce(mappedFunc, {} as any);
   const employeeMapped = employees.reduce(mappedFunc, {} as any);
   const departmentMapped = departments.reduce(mappedFunc, {} as any);
+  const penaltyDataMapped = penaltyData.reduce(mappedFunc, {} as any);
   const designationMapped = designations.reduce(mappedFunc, {} as any);
+  const penaltyReasonMapped = penaltyReasons.reduce(mappedFunc, {} as any);
 
   // ==================================
   // Current user permissions
@@ -98,7 +123,9 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     roles,
     employees,
     departments,
+    penaltyData,
     designations,
+    penaltyReasons,
 
     // Mapped objects
     userMapped,
@@ -106,6 +133,8 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     employeeMapped,
     departmentMapped,
     designationMapped,
+    penaltyDataMapped,
+    penaltyReasonMapped,
 
     // Current user permissions
     userPermissions,

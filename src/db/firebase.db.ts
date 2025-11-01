@@ -35,4 +35,6 @@ export const roleRef = collection(db, "roles");
 export const employeeRef = collection(db, "employee");
 export const departmentRef = collection(db, "departments");
 export const designationRef = collection(db, "designation");
+export const penaltyDataRef = collection(db, "penalty-data");
+export const penaltyReasonRef = collection(db, "penalty-reasons");
 export const penaltyCollectionRef = collection(db, "penalty-management");
