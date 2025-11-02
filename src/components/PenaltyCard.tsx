@@ -13,7 +13,6 @@ import { Fragment, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { penaltyDataRef } from "@/db/firebase.db";
-import { Calendar } from "lucide-react";
 
 interface PenaltyCardProps {
   filters: SearchFilters;
