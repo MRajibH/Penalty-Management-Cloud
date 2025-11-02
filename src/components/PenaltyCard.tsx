@@ -7,20 +7,13 @@ import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Separator } from "./ui/separator";
 import { SearchFilters } from "@/types";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import useBoolean from "@/hooks/use-boolean";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
+import { Fragment, useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { doc, updateDoc } from "firebase/firestore";
 import { penaltyDataRef } from "@/db/firebase.db";
+import { Calendar } from "lucide-react";
 
 interface PenaltyCardProps {
   filters: SearchFilters;
@@ -28,13 +21,7 @@ interface PenaltyCardProps {
 }
 
 export const BDT = ({ className = "" }) => (
-  <svg
-    className={cn("", className)}
-    xmlns="http://www.w3.org/2000/svg"
-    height="16px"
-    width="16px"
-    viewBox="0 0 24 24"
-  >
+  <svg className={cn("", className)} xmlns="http://www.w3.org/2000/svg" height="16px" width="16px" viewBox="0 0 24 24">
     <path
       fill="currentColor"
       d="M18.09 10.5V9h-8.5V4.5A1.5 1.5 0 0 0 8.09 3a1.5 1.5 0 0 0-1.5 1.5A1.5 1.5 0 0 0 8.09 6v3h-3v1.5h3v6.2c0 2.36 1.91 4.27 4.25 4.3c2.34-.04 4.2-1.96 4.16-4.3c0-1.59-.75-3.09-2-4.08a4.08 4.08 0 0 0-.7-.47c-.22-.1-.46-.15-.7-.15c-.71 0-1.36.39-1.71 1c-.19.3-.29.65-.29 1c.01 1.1.9 2 2.01 2c.62 0 1.2-.31 1.58-.8c.21.47.31.98.31 1.5c.04 1.5-1.14 2.75-2.66 2.8c-1.53 0-2.76-1.27-2.75-2.8v-6.2h8.5Z"
@@ -106,18 +93,14 @@ export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
               </Avatar>
               <div className="flex flex-col gap-1">
                 <div className="px-1 font-medium">{penalty.employee.name}</div>
-                <div className="flex flex-col items-center">
-                  <Badge variant="outline">{penalty.designation.designation_name}</Badge>
-                </div>
+                <Badge variant="outline" className="w-max">{penalty.designation.designation_name}</Badge>
               </div>
             </div>
           </div>
         </CardHeader>
 
         <div className="px-3 space-x-2 h-10">
-          {showTotalPendingAmount && (
-            <Badge variant="outline">Pending : BDT {totalPendingAmount}</Badge>
-          )}
+          {showTotalPendingAmount && <Badge variant="outline">Pending : BDT {totalPendingAmount}</Badge>}
           {showTotalPaidAmount && <Badge variant="outline">Paid : {totalPaidAmount}</Badge>}
         </div>
 
@@ -135,10 +118,7 @@ export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
                 >
                   Dispute all
                 </Button>
-                <Button
-                  className="w-full"
-                  onClick={() => setDialogState({ open: true, type: "markAllAsPaid" })}
-                >
+                <Button className="w-full" onClick={() => setDialogState({ open: true, type: "markAllAsPaid" })}>
                   Mark all as Paid
                 </Button>
               </>
@@ -147,10 +127,7 @@ export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
         )}
       </Card>
 
-      <Dialog
-        open={dialogState.open}
-        onOpenChange={(open) => setDialogState({ ...dialogState, open })}
-      >
+      <Dialog open={dialogState.open} onOpenChange={(open) => setDialogState({ ...dialogState, open })}>
         <DialogContent className="sm:max-w-[425px] pb-4">
           <DialogHeader>
             <DialogTitle>Update Penalty Status</DialogTitle>
@@ -163,17 +140,12 @@ export function PenaltyCard({ penalty, filters }: PenaltyCardProps) {
           <Separator />
 
           <DialogFooter className="gap-2">
-            <Button
-              variant={"outline"}
-              onClick={() => setDialogState({ ...dialogState, open: false })}
-            >
+            <Button variant={"outline"} onClick={() => setDialogState({ ...dialogState, open: false })}>
               Cancel
             </Button>
             <Button
               loading={loading}
-              onClick={() =>
-                handleClick(dialogState.type === "markAllAsPaid" ? "PAID" : "DISPUTED")
-              }
+              onClick={() => handleClick(dialogState.type === "markAllAsPaid" ? "PAID" : "DISPUTED")}
             >
               {dialogState.type === "markAllAsPaid" ? "Mark all as Paid" : "Dispute all"}
             </Button>
@@ -189,9 +161,7 @@ const PenaltyList = ({ penalties }: { penalties: ProcessedPenaltyDataType["penal
   const { userPermissions } = useDataContext();
   const [loading, setLoading] = useState(false);
   const { open, setOpen, onOpen, onClose } = useBoolean();
-  const [selectedPenalty, setSelectedPenalty] = useState<
-    ProcessedPenaltyDataType["penalties"][0] | null
-  >(null);
+  const [selectedPenalty, setSelectedPenalty] = useState<ProcessedPenaltyDataType["penalties"][0] | null>(null);
 
   const canUpdatePenalty = userPermissions?.overview?.penalties?.includes("update");
 
@@ -233,21 +203,12 @@ const PenaltyList = ({ penalties }: { penalties: ProcessedPenaltyDataType["penal
         const disputedBadgeColor = "border-red-500 text-red-800 bg-red-50";
 
         return (
-          <>
+          <Fragment key={index}>
             {index > 0 && <div className="border-dashed border-b border-gray-200" />}
-            <div
-              key={index}
-              className="px-4 flex gap-3 items-center text-gray-800 text-[13px] font-medium"
-            >
-              <span>{formattedDate}</span>
-              <div>
-                <Badge
-                  variant="outline"
-                  className={isPaid ? paidBadgeColor : isDisputed ? disputedBadgeColor : ""}
-                >
-                  BDT {penalty.amount}
-                </Badge>
-              </div>
+            <div key={index} className="px-4 flex gap-0 items-center text-gray-800 text-[13px] font-medium">
+              <span className="w-6 text-gray-500 font-normal">#{index+1}</span>
+              <span className="w-14">{formattedDate}</span>
+              <span className="w-3">:</span>
 
               {penalty.status === "PENDING" && canUpdatePenalty ? (
                 <span
@@ -259,8 +220,16 @@ const PenaltyList = ({ penalties }: { penalties: ProcessedPenaltyDataType["penal
               ) : (
                 <span className="flex-1 text-gray-600">{penalty.reason.reason_name}</span>
               )}
+
+
+              <div className="w-20 flex justify-end">
+                <Badge variant="outline" className={cn(isPaid ? paidBadgeColor : isDisputed ? disputedBadgeColor : "", "")}>
+                  BDT {penalty.amount}
+                </Badge>
+              </div>
+
             </div>
-          </>
+          </Fragment>
         );
       })}
 

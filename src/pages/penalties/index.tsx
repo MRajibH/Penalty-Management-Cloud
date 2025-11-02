@@ -10,21 +10,19 @@ import { useDataContext } from "@/context";
 import { PenaltyCard } from "@/components/PenaltyCard";
 
 const today = new Date();
-const last30Days = new Date();
-last30Days.setDate(today.getDate() - 30);
-
-const initialFilters: SearchFilters = {
-  search: "",
-  department: "DevSecOps",
-  status: "PENDING",
-  dateRange: {
-    start: last30Days.toISOString().split("T")[0], // Format as YYYY-MM-DD
-    end: today.toISOString().split("T")[0], // Format as YYYY-MM-DD
-  },
-};
+const last1year = new Date();
+last1year.setDate(today.getDate() - 365);
 
 const Penalties = () => {
-  const [filters, setFilters] = useState<SearchFilters>(initialFilters);
+  const [filters, setFilters] = useState<SearchFilters>({
+    search: "",
+    department: "DevSecOps",
+    status: "PENDING",
+    dateRange: {
+      start: last1year.toISOString().split("T")[0], // Format as YYYY-MM-DD
+      end: today.toISOString().split("T")[0], // Format as YYYY-MM-DD
+    },
+  });
   const dataContext = useDataContext();
   const userPermissions = dataContext.userPermissions;
   const canCreatePenalty = userPermissions?.overview?.penalties?.includes("create");
@@ -32,9 +30,9 @@ const Penalties = () => {
   const processedPenaltyData = processPenaltyData(dataContext, filters);
 
   return (
-    <div className="mx-auto grid gap-8">
-      <div className="flex flex-col gap-6 sticky top-0 left-0 right-0 z-10 bg-blue-50/25 backdrop-blur-xl">
-        <CardHeader className="pb-0 gap-4">
+    <div className="mx-auto grid gap-8 pb-8">
+      <div className="flex flex-col gap-4 sticky top-[-48px] left-0 right-0 z-10 bg-blue-50/25 backdrop-blur-lg shadow">
+        <CardHeader className="px-16 pt-4 pb-0 gap-2">
           <CardTitle className="flex items-center gap-2">
             <IoFilter className="w-6 h-6" />
             Filter Penalty Data
@@ -54,7 +52,7 @@ const Penalties = () => {
             )}
           </div>
         </CardHeader>
-        <Separator />
+        <Separator/>
       </div>
 
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
