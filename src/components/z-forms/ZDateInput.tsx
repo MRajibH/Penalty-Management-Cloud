@@ -42,6 +42,7 @@ const ZDateInput = ({ form, formKey, ...formData }: ZDateInput) => {
               <Calendar
                 mode="single"
                 onSelect={(date) => {
+                  if (!date) return;
                   const year = date?.getFullYear();
                   const month = String((date?.getMonth() || 0) + 1).padStart(2, "0"); // Months are 0-indexed
                   const day = String(date?.getDate()).padStart(2, "0"); // Day of the month
