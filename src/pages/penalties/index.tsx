@@ -31,8 +31,8 @@ const Penalties = () => {
 
   return (
     <div className="mx-auto grid gap-8 pb-8">
-      <div className="flex flex-col gap-4 sticky top-[-48px] left-0 right-0 z-10 bg-blue-50/25 backdrop-blur-lg shadow">
-        <CardHeader className="px-16 pt-4 pb-0 gap-2">
+      <div className="flex flex-col gap-4 sticky top-[-72px] left-0 right-0 z-10 bg-blue-50/25 backdrop-blur-md shadow">
+        <CardHeader className="px-8 2xl:px-16 pt-4 pb-0 gap-2">
           <CardTitle className="flex items-center gap-2">
             <IoFilter className="w-6 h-6" />
             Filter Penalty Data
@@ -46,7 +46,7 @@ const Penalties = () => {
             <Filters filters={filters} onFilterChange={setFilters} />
 
             {canCreatePenalty && (
-              <div className="absolute right-6 top-6">
+              <div className="absolute right-16 top-6">
                 <CreatePenalty />
               </div>
             )}

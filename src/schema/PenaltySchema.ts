@@ -4,7 +4,16 @@ import { z } from "zod";
 const schema = z.object({
   employee_id: z.string().min(1, "Engineer name required."),
   reason_id: z.string().min(1, "Reason is required."),
-  amount: z.string().min(1, "Amount must be a positive number."),
+  amount: z
+    .string()
+    .min(1, "Amount must be a positive number.")
+    .refine(
+      (val) => {
+        const num = Number(val);
+        return !isNaN(num) && num > 0;
+      },
+      { message: "Amount must be a positive number." }
+    ),
   date: z.string().min(1, "Date is required."),
   description: z.string().optional(),
 });

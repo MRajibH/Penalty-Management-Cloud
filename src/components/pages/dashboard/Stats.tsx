@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle, Clock } from "lucide-react";
-import { PenaltyStats } from "../types";
-import { BDT } from "./PenaltyCard";
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { PenaltyStats } from "../../../types";
+import { BDT } from "../../PenaltyCard";
+import { Card, CardDescription, CardHeader, CardTitle } from "../../ui/card";
 
 interface StatsProps {
   stats: PenaltyStats;
