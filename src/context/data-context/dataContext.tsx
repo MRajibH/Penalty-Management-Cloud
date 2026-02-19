@@ -28,6 +28,7 @@ export const useDataContext = () => useContext(DataContext);
 
 export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useAuthContext();
+  const isLoggedIn = !!currentUser;
 
   const [users, setUsers] = useState<userType[]>([]);
   const [roles, setRoles] = useState<roleType[]>([]);
@@ -53,31 +54,31 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
     // Subcribe collections on mount
     // ===============================
     const unsubscribeUser = onSnapshot(QueryUserRef, (snapshot) => {
-      setUsers(getSnapshotData(snapshot));
+      setUsers(getSnapshotData(snapshot, isLoggedIn));
     });
 
     const unsubscribeRole = onSnapshot(QueryRoleRef, (snapshot) => {
-      setRoles(getSnapshotData(snapshot));
+      setRoles(getSnapshotData(snapshot, isLoggedIn));
     });
 
     const unsubscribeEmployee = onSnapshot(QueryEmployeeRef, (snapshot) => {
-      setEmployees(getSnapshotData(snapshot));
+      setEmployees(getSnapshotData(snapshot, isLoggedIn));
     });
 
     const unsubscribeDepartment = onSnapshot(QueryDepartmentRef, (snapshot) => {
-      setDepartments(getSnapshotData(snapshot));
+      setDepartments(getSnapshotData(snapshot, isLoggedIn));
     });
 
     const unsubscribeDesignation = onSnapshot(QueryDesignationRef, (snapshot) => {
-      setDesignations(getSnapshotData(snapshot));
+      setDesignations(getSnapshotData(snapshot, isLoggedIn));
     });
 
     const unsubscribePenaltyData = onSnapshot(QueryPenaltyDataRef, (snapshot) => {
-      setPenaltyData(getSnapshotData(snapshot));
+      setPenaltyData(getSnapshotData(snapshot, isLoggedIn));
     });
 
     const unsubscribePenaltyReason = onSnapshot(QueryPenaltyReasonRef, (snapshot) => {
-      setPenaltyReasons(getSnapshotData(snapshot));
+      setPenaltyReasons(getSnapshotData(snapshot, isLoggedIn));
     });
 
     return () => {
@@ -92,7 +93,7 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
       unsubscribePenaltyData();
       unsubscribePenaltyReason();
     };
-  }, []);
+  }, [isLoggedIn]);
 
   // ==================================
   // Converting array to object

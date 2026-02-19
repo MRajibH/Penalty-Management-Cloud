@@ -28,14 +28,14 @@ const RootLayout = () => {
   }, [pathname]);
 
   return (
-    <div className="h-screen overflow-auto">
+    <div className="h-screen overflow-auto flex flex-col">
       <TooltipProvider delayDuration={0}>
         <ResizablePanelGroup
           direction="horizontal"
           onLayout={(sizes: number[]) => {
             document.cookie = `react-resizable-panels:layout:mail=${JSON.stringify(sizes)}`;
           }}
-          className="h-full items-stretch"
+          className="h-full items-stretch flex-1"
         >
           <ResizablePanel
             defaultSize={defaultLayout[0]}
@@ -95,6 +95,15 @@ const RootLayout = () => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </TooltipProvider>
+
+      {!currentUser && (
+        <footer className="flex items-center justify-center py-1 gap-1">
+          <ShieldAlert className="w-4 h-4 text-gray-500 mb-0.5" />
+          <p className="text-xs text-gray-700 font-medium">
+            Certain information may be hidden for security purposes. Please log in to access all details.
+          </p>
+        </footer>
+      )}
     </div>
   );
 };
