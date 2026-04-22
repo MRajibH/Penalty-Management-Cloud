@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 import { UserSchemaType, getUserSchema } from "@/schema/UserSchema";
 import { Check } from "lucide-react";
 
+const avatarBasePath = `${import.meta.env.BASE_URL}avatar/`;
+
 interface UserFormProps {
   onClose: any;
   componentFor?: "update" | "create" | "view";
@@ -141,7 +143,7 @@ const UserForm = ({ onClose, defaultValue, componentFor = "create" }: UserFormPr
             <ZBase control={form.control} {...user_avatar_fields}>
               <div className="grid grid-cols-5 gap-6 py-4">
                 {Array.from({ length: 10 }).map((_, index) => {
-                  const src = `/Penalty-Management-Cloud/avatar/user-${index + 1}.jpg`;
+                  const src = `${avatarBasePath}user-${index + 1}.jpg`;
                   const isSelected = selectedAvatar === src;
 
                   return (

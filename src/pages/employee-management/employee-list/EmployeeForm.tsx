@@ -15,6 +15,8 @@ import { cn } from "@/lib/utils";
 import { EmployeeSchemaType, getEmployeeSchema } from "@/schema/EmployeeSchema";
 import { Check } from "lucide-react";
 
+const avatarBasePath = `${import.meta.env.BASE_URL}avatar/`;
+
 interface EmployeeFormProps {
   onClose: any;
   componentFor?: "update" | "create" | "view";
@@ -105,7 +107,7 @@ const EmployeeForm = ({ onClose, defaultValue, componentFor = "create" }: Employ
             <ZBase control={form.control} {...employee_avatar_fields}>
               <div className="grid grid-cols-5 gap-6 py-4">
                 {Array.from({ length: 10 }).map((_, index) => {
-                  const src = `/Penalty-Management-Cloud/avatar/user-${index + 1}.jpg`;
+                  const src = `${avatarBasePath}user-${index + 1}.jpg`;
                   const isSelected = selectedAvatar === src;
 
                   return (

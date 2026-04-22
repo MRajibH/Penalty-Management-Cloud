@@ -8,6 +8,8 @@ interface SidebarProps {
   isCollapsed: boolean;
 }
 
+const logoSrc = `${import.meta.env.BASE_URL}logo.png`;
+
 export const Logo = ({ className }: { className?: string }) => (
   <span className={cn("w-8 h-8 flex items-center", className)}>
     <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +53,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
     <div className="flex flex-col h-full">
       <div className={cn("flex items-center h-[52px]", isCollapsed ? "justify-center" : "px-2")}>
-        <img src={"/logo.png"} alt="Penalty Management logo" className="w-8 mx-2" />
+        <img src={logoSrc} alt="Penalty Management logo" className="w-8 mx-2" />
         {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && <h3 className="font-bold text-xl">Penalty Management</h3>}
         {/* <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} /> */}

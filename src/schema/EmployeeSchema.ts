@@ -18,7 +18,7 @@ const defaultValue = {
   email: "",
   phone: "",
   designation_id: "",
-  avatar: "/Penalty-Management-Cloud/avatar/user-1.jpg",
+  avatar: `${import.meta.env.BASE_URL}avatar/user-1.jpg`,
 };
 
 export type EmployeeSchemaType = z.infer<typeof schema>;
