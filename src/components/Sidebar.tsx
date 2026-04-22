@@ -51,7 +51,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
     <div className="flex flex-col h-full">
       <div className={cn("flex items-center h-[52px]", isCollapsed ? "justify-center" : "px-2")}>
-        <img src={"/Penalty-Management-Cloud/logo.png"} className="w-8 mx-2" />
+        <img src={"/logo.png"} alt="Penalty Management logo" className="w-8 mx-2" />
         {/* <Logo className={isCollapsed ? "mr-0" : "mr-4"} /> */}
         {!isCollapsed && <h3 className="font-bold text-xl">Penalty Management</h3>}
         {/* <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} /> */}
